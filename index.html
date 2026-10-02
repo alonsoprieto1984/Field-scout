@@ -41,7 +41,9 @@ const oldRenderHome=renderHome;renderHome=function(){oldRenderHome();let active=
 
 showReports=function(){
 
+  let allPlants=db.plants,rf0=window.reportFilters||{from:'',to:'',product:''};db.plants=allPlants.filter(p=>(!rf0.product||p.product===rf0.product)&&(!rf0.from&&!rf0.to||harvestsOf(p).some(h=>(!rf0.from||h.date>=rf0.from)&&(!rf0.to||h.date<=rf0.to))));
   reportsOriginal();
+  db.plants=allPlants;
 
   setTimeout(()=>{
 
@@ -56,6 +58,8 @@ showReports=function(){
     box.innerHTML='<b>Filtros</b><div class="formgrid" style="margin-top:12px"><div><label>Desde</label><input id="repFrom" type="date"></div><div><label>Hasta</label><input id="repTo" type="date"></div><div class="full"><label>Producto</label><select id="repProduct"><option value="">Todos</option><option>Arúgula</option><option>Espinaca</option><option>Cress</option></select></div></div>';
 
     title.after(box);
+    let rf=window.reportFilters||(window.reportFilters={from:'',to:'',product:''});repFrom.value=rf.from;repTo.value=rf.to;repProduct.value=rf.product;[repFrom,repTo,repProduct].forEach(x=>x.onchange=()=>{rf.from=repFrom.value;rf.to=repTo.value;rf.product=repProduct.value;showReports()});
+    
 
   },100);
 
