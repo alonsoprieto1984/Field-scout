@@ -58,6 +58,7 @@ showReports=function(){
     box.innerHTML='<b>Filtros</b><div class="formgrid" style="margin-top:12px"><div><label>Desde</label><input id="repFrom" type="date"></div><div><label>Hasta</label><input id="repTo" type="date"></div><div class="full"><label>Producto</label><select id="repProduct"><option value="">Todos</option><option>Arúgula</option><option>Espinaca</option><option>Cress</option></select></div></div>';
 
     title.after(box);
+    let clear=document.createElement('button');clear.textContent='Limpiar filtros';clear.style.marginTop='12px';clear.onclick=()=>{window.reportFilters={from:'',to:'',product:''};showReports()};box.appendChild(clear);
     let rf=window.reportFilters||(window.reportFilters={from:'',to:'',product:''});repFrom.value=rf.from;repTo.value=rf.to;repProduct.value=rf.product;[repFrom,repTo,repProduct].forEach(x=>x.onchange=()=>{rf.from=repFrom.value;rf.to=repTo.value;rf.product=repProduct.value;showReports()});
     
 
