@@ -60,6 +60,10 @@ showReports=function(){
   },100);
 
 };
+  document.querySelectorAll('.tabs button').forEach(b=>{if(b.textContent.trim()==='Reports')b.onclick=showReports});
+  
+  
+  
 
 document.querySelector('header small').textContent='Planting & Crop Tracking · v2.8';
   
