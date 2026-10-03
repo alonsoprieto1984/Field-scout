@@ -12,6 +12,27 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body><header><h1>Field Scout</h1><small>Planting & Crop Tracking · v2.4</small></header><main class="wrap">
+  <section id="loginScreen" class="screen">
+
+  <div class="card">
+
+    <h2>Iniciar sesión</h2>
+
+    <label>Correo electrónico</label>
+
+    <input id="loginEmail" type="email" autocomplete="email" placeholder="tu@email.com">
+
+    <label>Contraseña</label>
+
+    <input id="loginPassword" type="password" autocomplete="current-password" placeholder="Contraseña">
+
+    <button type="button" onclick="loginFieldScout()">Iniciar sesión</button>
+
+    <div id="loginMessage" class="muted" style="margin-top:10px"></div>
+
+  </div>
+
+</section>
 <section id="home" class="page"><h2>Mi semana</h2><div class="grid metrics"><div class="card metric"><b id="mActive">0</b><span>Plantings activos</span></div><div class="card metric"><b id="mPending">0</b><span>Scouts pendientes</span></div><div class="card metric"><b id="mHarvest">0</b><span>Próx. cosechas</span></div><div class="card metric"><b id="mScouts">0</b><span>Scouts registrados</span></div></div><div class="actions"><a class="btnlink" href="#newPlant" onclick="showNewPlant()">+ Nuevo Planting</a><a class="btnlink secondary" href="#plantings" onclick="go('plantings')">Ver Plantings</a></div><h2>Próximas cosechas</h2><div id="upcoming"></div></section>
 <section id="plantings" class="page hidden"><div class="item"><h2>Plantings</h2><button onclick="showNewPlant()">+ Nuevo</button></div><input id="search" placeholder="Buscar TLC Ref #, rancho, lote..." oninput="renderPlants()"><div class="row" style="margin-top:10px"><select id="filterProduct" onchange="renderPlants()"><option value="">Todos los productos</option><option>Arúgula</option><option>Espinaca</option><option>Cress</option></select><select id="filterStatus" onchange="renderPlants()"><option value="">Todos los estados</option><option>Projected</option><option>Planted</option><option>Growing</option><option>Near Harvest</option><option>Harvested</option><option>Closed</option><option>No Harvest</option></select></div><div id="plantList" style="margin-top:12px"></div></section>
 <section id="newPlant" class="page hidden"><button class="back" onclick="go('plantings')">← Plantings</button><h2 class="bigtitle">Nuevo Planting</h2><form id="plantForm" action="#newPlant" class="card formgrid"><div><label>Producto *</label><select name="product" required><option value="">Seleccionar</option><option>Arúgula</option><option>Espinaca</option><option>Cress</option></select></div><div><label>TLC Ref # *</label><input name="ref" required placeholder="Ej. S24506"></div><div><label>Rancho *</label><input name="ranch" required></div><div><label>Lote *</label><input name="lot" required></div><div><label>Variedad</label><input name="variety"></div><div><label>Customer</label><input name="customer"></div><div><label>Acres *</label><input name="acres" type="number" min="0" step="0.01" required></div><div><label>Beds</label><input name="beds" type="number" min="0" step="1"></div><div><label>Proj Wet Date</label><input name="wetDate" type="date"></div><div><label>Proj Clip Days</label><input name="clipDays" type="number" min="0"></div><div><label>Clip Harv. Date</label><input name="harvestDate" type="date"></div><div><label>Estado</label><select name="status"><option>Projected</option><option>Planted</option><option>Growing</option><option>Near Harvest</option></select></div><div class="full" style="margin-top:16px"><button type="button" id="savePlantBtn">Guardar Planting</button></div></form></section>
@@ -22,6 +43,35 @@ const SUPABASE_URL='https://rdqbiqyujsnqajpjvufb.supabase.co';
   const SUPABASE_KEY='sb_publishable_pYGlEnz-JqNnbcu2fSjXlA_fo5MEZn0';
   const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 const KEY='fieldScoutV1';let storageOK=true;let db={plants:[]};try{db=JSON.parse(localStorage.getItem(KEY)||'{\"plants\":[]}')}catch(e){storageOK=false;db={plants:[]}}let current=null;const yields={'Arúgula':8500,'Espinaca':10000,'Cress':6000};
+  async function loginFieldScout(){
+
+  const email=document.getElementById('loginEmail').value.trim();
+
+  const password=document.getElementById('loginPassword').value;
+
+  const msg=document.getElementById('loginMessage');
+
+  msg.textContent='Iniciando sesión...';
+
+  const {error}=await supabaseClient.auth.signInWithPassword({
+
+    email:email,
+
+    password:password
+
+  });
+
+  if(error){
+
+    msg.textContent='Correo o contraseña incorrectos.';
+
+    return;
+
+  }
+
+  msg.textContent='Sesión iniciada correctamente.';
+
+}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){storageOK=false}renderHome();renderPlants();return storageOK}function go(id){document.querySelectorAll('main section').forEach(x=>x.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));let t=document.getElementById('tab-'+id);if(t)t.classList.add('active');if(id==='home')renderHome();if(id==='plantings')renderPlants();scrollTo(0,0)}function showNewPlant(){document.getElementById('plantForm').reset();go('newPlant')}
 function fmt(d){if(!d)return '—';return new Date(d+'T12:00:00').toLocaleDateString('es-US',{month:'short',day:'numeric',year:'numeric'})}function expected(p){return Math.round((+p.acres||0)*(yields[p.product]||0))}
 function savePlanting(){let form=document.getElementById('plantForm');if(!form.reportValidity())return;let f=Object.fromEntries(new FormData(form));if(db.plants.some(p=>p.ref.trim().toLowerCase()===f.ref.trim().toLowerCase())){alert('Ese TLC Ref # ya existe. Abre el planting existente para conservar su historial.');return}f.id=(crypto&&crypto.randomUUID)?crypto.randomUUID():'p'+Date.now();f.scouts=[];f.harvest=null;db.plants.unshift(f);let persisted=save();openPlant(f.id);if(!persisted){setTimeout(()=>alert('Planting creado para esta sesión. El visor del iPhone no permitió almacenamiento permanente; al publicarlo como web app sí quedará guardado.'),100)}}document.getElementById('savePlantBtn').onclick=savePlanting;document.getElementById('plantForm').onsubmit=e=>{e.preventDefault();savePlanting()};
