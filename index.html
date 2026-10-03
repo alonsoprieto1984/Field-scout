@@ -16,6 +16,8 @@
 <section id="detail" class="page hidden"><button class="back" onclick="go('plantings')">← Plantings</button><div id="detailBody"></div></section>
 </main><nav class="tabs"><div><button id="tab-home" onclick="go('home')">Inicio</button><button id="tab-plantings" onclick="go('plantings')">Plantings</button><button onclick="showNewPlant()">+ Nuevo</button></div></nav>
 <script>
+const SUPABASE_URL='https://rdqbiqyujsnqajpjvufb.supabase.co';
+  const SUPABASE_KEY='sb_publishable_pYGlEnz-JqNnbcu2fSjXlA_fo5MEZn0';
 const KEY='fieldScoutV1';let storageOK=true;let db={plants:[]};try{db=JSON.parse(localStorage.getItem(KEY)||'{\"plants\":[]}')}catch(e){storageOK=false;db={plants:[]}}let current=null;const yields={'Arúgula':8500,'Espinaca':10000,'Cress':6000};
 function save(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){storageOK=false}renderHome();renderPlants();return storageOK}function go(id){document.querySelectorAll('main section').forEach(x=>x.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));let t=document.getElementById('tab-'+id);if(t)t.classList.add('active');if(id==='home')renderHome();if(id==='plantings')renderPlants();scrollTo(0,0)}function showNewPlant(){document.getElementById('plantForm').reset();go('newPlant')}
 function fmt(d){if(!d)return '—';return new Date(d+'T12:00:00').toLocaleDateString('es-US',{month:'short',day:'numeric',year:'numeric'})}function expected(p){return Math.round((+p.acres||0)*(yields[p.product]||0))}
