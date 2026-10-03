@@ -51,7 +51,7 @@ const KEY='fieldScoutV1';let storageOK=true;let db={plants:[]};try{db=JSON.parse
 
   const msg=document.getElementById('loginMessage');
 
-  msg.textContent='Iniciando sesión...';
+  msg.textContent='Iniciando sesión...';go('home');
 
   const {error}=await supabaseClient.auth.signInWithPassword({
 
