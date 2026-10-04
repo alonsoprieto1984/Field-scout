@@ -75,6 +75,49 @@ go('home');
 }
 function save(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){storageOK=false}renderHome();renderPlants();return storageOK}function go(id){document.querySelectorAll('main section').forEach(x=>x.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));let t=document.getElementById('tab-'+id);if(t)t.classList.add('active');if(id==='home')renderHome();if(id==='plantings')renderPlants();scrollTo(0,0)}function showNewPlant(){document.getElementById('plantForm').reset();go('newPlant')}
 function fmt(d){if(!d)return '—';return new Date(d+'T12:00:00').toLocaleDateString('es-US',{month:'short',day:'numeric',year:'numeric'})}function expected(p){return Math.round((+p.acres||0)*(yields[p.product]||0))}
+async function savePlantingCloud(p){
+
+  const {data,error}=await supabaseClient.from('plantings').insert({
+
+    ref:p.ref,
+
+    product:p.product,
+
+    variety:p.variety||null,
+
+    ranch:p.ranch||null,
+
+    lot:p.lot||null,
+
+    customer:p.customer||null,
+
+    acres:+p.acres||0,
+
+    beds:+p.beds||0,
+
+    wet_date:p.wetDate||null,
+
+    clip_days:+p.clipDays||null,
+
+    harvest_date:p.harvestDate||null,
+
+    status:p.status||'Projected',
+
+    weekly_scouting:trackingOn(p)
+
+  }).select().single();
+
+  if(error){
+
+    console.error('Supabase planting error:',error);
+
+    return null;
+
+  }
+
+  return data;
+
+}  
 function savePlanting(){let form=document.getElementById('plantForm');if(!form.reportValidity())return;let f=Object.fromEntries(new FormData(form));if(db.plants.some(p=>p.ref.trim().toLowerCase()===f.ref.trim().toLowerCase())){alert('Ese TLC Ref # ya existe. Abre el planting existente para conservar su historial.');return}f.id=(crypto&&crypto.randomUUID)?crypto.randomUUID():'p'+Date.now();f.scouts=[];f.harvest=null;db.plants.unshift(f);let persisted=save();openPlant(f.id);if(!persisted){setTimeout(()=>alert('Planting creado para esta sesión. El visor del iPhone no permitió almacenamiento permanente; al publicarlo como web app sí quedará guardado.'),100)}}document.getElementById('savePlantBtn').onclick=savePlanting;document.getElementById('plantForm').onsubmit=e=>{e.preventDefault();savePlanting()};
 function renderPlants(){let q=(search?.value||'').toLowerCase(),prod=filterProduct?.value||'',st=filterStatus?.value||'';let a=db.plants.filter(p=>(!prod||p.product===prod)&&(!st||p.status===st)&&(!q||[p.ref,p.ranch,p.lot,p.variety].join(' ').toLowerCase().includes(q)));a.sort((x,y)=>{let done=p=>['Harvested','Closed','No Harvest'].includes(p.status);if(done(x)!==done(y))return done(x)?1:-1;let dx=x.harvestDate?new Date(x.harvestDate+'T12:00:00').getTime():Infinity,dy=y.harvestDate?new Date(y.harvestDate+'T12:00:00').getTime():Infinity;return dx-dy;});plantList.innerHTML=a.length?a.map(p=>`<div class="card plant" onclick="openPlant('${p.id}')"><div class="item"><div><strong>${esc(p.ref)} · ${esc(p.product)}</strong><span class="muted">${esc(p.ranch)} / ${esc(p.lot)} · ${p.acres} ac</span></div><span class="tag">${esc(p.status)}</span></div><div class="muted" style="margin-top:8px">Cosecha proyectada: ${fmt(p.harvestDate)} · Esperado: ${expected(p).toLocaleString()} lb</div></div>`).join(''):'<div class="empty">Todavía no hay plantings.</div>'}
 function renderHome(){let active=db.plants.filter(p=>!['Harvested','Closed','No Harvest'].includes(p.status));mActive.textContent=active.length;mScouts.textContent=db.plants.reduce((n,p)=>n+p.scouts.length,0);mPending.textContent=active.filter(p=>p.scouts.length===0||Date.now()-new Date(p.scouts[0]?.date||0).getTime()>4*864e5).length;let now=Date.now(),soon=active.filter(p=>p.harvestDate&&new Date(p.harvestDate+'T12:00:00').getTime()-now<14*864e5&&new Date(p.harvestDate+'T12:00:00').getTime()>=now-864e5);mHarvest.textContent=soon.length;upcoming.innerHTML=soon.length?soon.slice(0,5).map(p=>`<div class="card plant" onclick="openPlant('${p.id}')"><strong>${esc(p.ref)} · ${esc(p.product)}</strong><div class="muted">${esc(p.ranch)} / ${esc(p.lot)} · ${fmt(p.harvestDate)}</div></div>`).join(''):'<div class="card empty">No hay cosechas próximas registradas.</div>'}
