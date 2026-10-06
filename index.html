@@ -210,7 +210,6 @@ const urls=[];
     urls.push(urlData.publicUrl);
     
     
-    await supabaseClient.from('scouts').update({photo_urls:s.photoUrls}).eq('id',s.id);
 
   }
 return urls;
