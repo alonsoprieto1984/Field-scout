@@ -206,6 +206,11 @@ async function uploadScoutPhotos(photos,plantId){
       console.error('Photo upload error:',error);
 
     }
+    const {data:urlData}=supabaseClient.storage.from('Scout-photos').getPublicUrl(fileName);
+    photo.url=urlData.publicUrl;
+    if(!s.photoUrls)s.photoUrls=[];
+    s.photoUrls.push(urlData.publicUrl);
+    await supabaseClient.from('scouts').update({photo_urls:s.photoUrls}).eq('id',s.id);
 
   }
 
