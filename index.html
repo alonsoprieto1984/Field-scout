@@ -42,7 +42,7 @@
 const SUPABASE_URL='https://rdqbiqyujsnqajpjvufb.supabase.co';
   const SUPABASE_KEY='sb_publishable_pYGlEnz-JqNnbcu2fSjXlA_fo5MEZn0';
   const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-const KEY='fieldScoutV1';let storageOK=true;let db={plants:[]};try{db=JSON.parse(localStorage.getItem(KEY)||'{\"plants\":[]}')}catch(e){storageOK=false;db={plants:[]}}let current=null;const yields={'Arúgula':8500,'Espinaca':10000,'Cress':6000};
+const KEY='fieldScoutV1';let storageOK=true;let db={plants:[]};try{db=JSON.parse(localStorage.getItem(KEY)||'{\"plants\":[]}')}catch(e){storageOK=false;db={plants:[]}}let current=null;const yields={'Arúgula':8500,'Arugula':8500,'Espinaca':10000,'Spinach':10000,'Cress':6000};
   async function loginFieldScout(){
 
   const email=document.getElementById('loginEmail').value.trim();
