@@ -184,7 +184,7 @@ function scoutForm(){let p=db.plants.find(x=>x.id===current);detailBody.innerHTM
     return false;
 
   }
-
+if(s.photos?.length){s.photos=await uploadScoutPhotos(s.photos,plant.id);}
   const {error}=await supabaseClient.from('scouts').insert({
 
     planting_id:plant.id,
@@ -209,8 +209,8 @@ function scoutForm(){let p=db.plants.find(x=>x.id===current);detailBody.innerHTM
 
     damage_notes:s.damageNotes||null,
 
-    notes:s.notes||null
-
+    notes:s.notes||null,
+photo_urls:s.photos||[]
   });
 
   if(error){
@@ -220,7 +220,7 @@ function scoutForm(){let p=db.plants.find(x=>x.id===current);detailBody.innerHTM
     return false;
 
   }
-    if(s.photos?.length){s.photos=await uploadScoutPhotos(s.photos,plant.id);}
+    
 
   return true;
 
