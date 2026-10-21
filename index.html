@@ -72,6 +72,7 @@ const KEY='fieldScoutV1';let storageOK=true;let db={plants:[]};try{db=JSON.parse
   msg.textContent='Sesión iniciada correctamente.';
     document.getElementById('appNav').style.display='';
 await loadPlantingsCloud();
+    await loadScoutsCloud();
     go('home');
 }
 function save(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){storageOK=false}renderHome();renderPlants();return storageOK}function go(id){document.querySelectorAll('main section').forEach(x=>x.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));let t=document.getElementById('tab-'+id);if(t)t.classList.add('active');if(id==='home')renderHome();if(id==='plantings')renderPlants();scrollTo(0,0)}function showNewPlant(){document.getElementById('plantForm').reset();go('newPlant')}
@@ -112,7 +113,87 @@ db.plants=[...db.plants,...data.filter(p=>!db.plants.some(local=>local.ref===p.r
 
 }))];
 }
-  
+ async function loadScoutsCloud(){
+
+  const {data,error}=await supabaseClient
+
+    .from('scouts')
+
+    .select('*');
+
+  if(error){
+
+    console.error('Error loading scouts:',error);
+
+    return;
+
+  }
+
+  console.log('Scouts found in Supabase:',data.length);
+const {data:cloudPlants,error:plantsError}=await supabaseClient
+
+  .from('plantings')
+
+  .select('id,ref');
+
+if(plantsError){
+
+  console.error('Error matching scout plantings:',plantsError);
+
+  return;
+
+}
+   const plantRefs=new Map(
+
+  cloudPlants.map(p=>[String(p.id),p.ref])
+
+);
+   for(const s of data){
+
+  const ref=plantRefs.get(String(s.planting_id));
+
+  const p=db.plants.find(x=>x.ref===ref);
+
+  if(!p)continue;
+
+  if(!Array.isArray(p.scouts))p.scouts=[];
+
+  const alreadyExists=p.scouts.some(x=>String(x.cloudId)===String(s.id));
+
+  if(alreadyExists)continue;
+
+  p.scouts.push({
+
+    cloudId:s.id,
+
+    date:s.scout_date,
+
+    size:s.size_inches,
+
+    quality:s.quality,
+
+    population:s.population,
+
+    disease:s.disease,
+
+    weeds:s.weeds,
+
+    weatherDamagePct:s.weather_damage_pct,
+
+    insectDamagePct:s.insect_damage_pct,
+
+    observations:s.observations,
+
+    damageNotes:s.damage_notes,
+
+    notes:s.notes,
+
+    photos:s.photo_urls||[]
+
+  });
+
+}
+} 
   function fmt(d){if(!d)return '—';return new Date(d+'T12:00:00').toLocaleDateString('es-US',{month:'short',day:'numeric',year:'numeric'})}function expected(p){return Math.round((+p.acres||0)*(yields[p.product]||0))}
 async function savePlantingCloud(p){
 
