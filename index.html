@@ -244,7 +244,7 @@ showReports=function(){
 
     box.className='card';
 
-    box.innerHTML='<b>Filters</b><div class="formgrid" style="margin-top:12px"><div><label>From</label><input id="repFrom" type="date"></div><div><label>To</label><input id="repTo" type="date"></div><div class="full"><label>Commodity</label><select id="repProduct"><option value="">All Commodities</option><option>Arúgula</option><option>Espinaca</option><option>Cress</option></select></div></div>';
+    box.innerHTML='<b>Filters</b><div class="formgrid" style="margin-top:12px"><div><label>From</label><input id="repFrom" type="date"></div><div><label>To</label><input id="repTo" type="date"></div><div class="full"><label>Commodity</label><select id="repProduct"><option value="">All Commodities</option><option>Arúgula</option><option value="Espinaca">Spinach</option><option>Cress</option></select></div></div>';
 
     title.after(box);
     let clear=document.createElement('button');clear.textContent='Clear Filters';clear.style.marginTop='12px';clear.onclick=()=>{window.reportFilters={from:'',to:'',product:''};showReports()};box.appendChild(clear);
