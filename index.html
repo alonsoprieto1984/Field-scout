@@ -92,8 +92,27 @@ async function loadPlantingsCloud(){
   }
 
   console.log('Plantings found in Supabase:',data.length);
+db.plants=[...db.plants,...data.filter(p=>!db.plants.some(local=>local.ref===p.ref)).map(p=>({
 
+  ...p,
+
+  id:String(p.id),
+
+  wetDate:p.wet_date,
+
+  clipDays:p.clip_days,
+
+  harvestDate:p.harvest_date,
+
+  weeklyScouting:p.weekly_scouting,
+
+  scouts:[],
+
+  harvest:null
+
+}))];
 }
+  
   function fmt(d){if(!d)return '—';return new Date(d+'T12:00:00').toLocaleDateString('es-US',{month:'short',day:'numeric',year:'numeric'})}function expected(p){return Math.round((+p.acres||0)*(yields[p.product]||0))}
 async function savePlantingCloud(p){
 
