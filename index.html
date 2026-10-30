@@ -433,8 +433,242 @@ showReports=function(){
   
 
 document.querySelector('header small').textContent='Planting & Crop Tracking · v2.8';
-  
-  
+  const openPlantBeforeEdit = openPlant;
+
+openPlant = function(id) {
+
+  openPlantBeforeEdit(id);
+
+  const actions = detailBody.querySelector('.actions');
+
+  if (!actions) return;
+
+  const btn = document.createElement('button');
+
+  btn.textContent = 'Edit Planting';
+
+  btn.className = 'secondary';
+
+  btn.onclick = () => editPlanting(id);
+
+  actions.appendChild(btn);
+
+};
+function editPlanting(id) {
+
+  const p = db.plants.find(x => x.id === id);
+
+  if (!p) return;
+
+  detailBody.innerHTML = `
+
+    <button class="back" onclick="openPlant('${p.id}')">← Planting Details</button>
+
+    <h2 class="bigtitle">Edit Planting</h2>
+
+    <div class="muted">${esc(p.ref)} · ${esc(p.product)}</div>
+
+    <form id="editPlantForm" class="card formgrid">
+
+      <div>
+
+        <label>Ranch</label>
+
+        <input name="ranch" value="${esc(p.ranch)}">
+
+      </div>
+
+      <div>
+
+        <label>Lot</label>
+
+        <input name="lot" value="${esc(p.lot)}">
+
+      </div>
+
+      <div>
+
+        <label>Variety</label>
+
+        <input name="variety" value="${esc(p.variety)}">
+
+      </div>
+
+      <div>
+
+        <label>Customer</label>
+
+        <input name="customer" value="${esc(p.customer)}">
+
+      </div>
+
+      <div>
+
+        <label>Acres</label>
+
+        <input name="acres" type="number" min="0" step="0.01" required value="${esc(p.acres)}">
+
+      </div>
+
+      <div>
+
+        <label>Beds</label>
+
+        <input name="beds" type="number" min="0" step="1" value="${esc(p.beds)}">
+
+      </div>
+
+      <div>
+
+        <label>Proj Wet Date</label>
+
+        <input name="wetDate" type="date" value="${esc(p.wetDate)}">
+
+      </div>
+
+      <div>
+
+        <label>Proj Clip Days</label>
+
+        <input name="clipDays" type="number" min="0" value="${esc(p.clipDays)}">
+
+      </div>
+
+      <div>
+
+        <label>Proj Harvest Date</label>
+
+        <input name="harvestDate" type="date" value="${esc(p.harvestDate)}">
+
+      </div>
+
+      <div>
+
+        <label>Status</label>
+
+        <select name="status">
+
+          ${['Projected','Planted','Growing','Near Harvest','Harvested','Closed','No Harvest'].map(s =>
+
+            `<option value="${s}" ${p.status === s ? 'selected' : ''}>${s}</option>`
+
+          ).join('')}
+
+        </select>
+
+      </div>
+
+      <div class="full" style="margin-top:16px">
+
+        <button type="button" id="saveEditBtn" disabled>Save Changes</button>
+
+      </div>
+
+    </form>
+
+  `;
+  const btn = document.getElementById('saveEditBtn');
+
+  btn.disabled = false;
+
+  btn.onclick = async () => {
+
+    const form = document.getElementById('editPlantForm');
+
+    if (!form.reportValidity()) return;
+
+    const f = Object.fromEntries(new FormData(form));
+
+    btn.disabled = true;
+
+    btn.textContent = 'Saving...';
+
+    try {
+
+      const changes = {
+
+        ranch: f.ranch,
+
+        lot: f.lot,
+
+        variety: f.variety,
+
+        customer: f.customer,
+
+        acres: Number(f.acres),
+
+        beds: Number(f.beds || 0),
+
+        wet_date: f.wetDate || null,
+
+        clip_days: f.clipDays ? Number(f.clipDays) : null,
+
+        harvest_date: f.harvestDate || null,
+
+        status: f.status
+
+      };
+
+      const { data, error } = await supabaseClient
+
+        .from('plantings')
+
+        .update(changes)
+
+        .eq('ref', p.ref)
+
+        .select('id')
+
+        .single();
+
+      if (error || !data) {
+
+        throw new Error(error?.message || 'Planting not found in Supabase');
+
+      }
+
+      Object.assign(p, {
+
+        ranch: f.ranch,
+
+        lot: f.lot,
+
+        variety: f.variety,
+
+        customer: f.customer,
+
+        acres: f.acres,
+
+        beds: f.beds,
+
+        wetDate: f.wetDate,
+
+        clipDays: f.clipDays,
+
+        harvestDate: f.harvestDate,
+
+        status: f.status
+
+      });
+
+      save();
+
+      openPlant(p.id);
+
+      alert('Planting updated successfully');
+
+    } catch (err) {
+
+      alert('Save failed: ' + err.message);
+
+      btn.disabled = false;
+
+      btn.textContent = 'Save Changes';
+
+    }
+
+  };
+}  
   
   
   
