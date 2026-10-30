@@ -73,6 +73,7 @@ const KEY='fieldScoutV1';let storageOK=true;let db={plants:[]};try{db=JSON.parse
     document.getElementById('appNav').style.display='';
 await loadPlantingsCloud();
     await loadScoutsCloud();
+    await loadHarvestsCloud();
     go('home');
 }
 function save(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){storageOK=false}renderHome();renderPlants();return storageOK}function go(id){document.querySelectorAll('main section').forEach(x=>x.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));let t=document.getElementById('tab-'+id);if(t)t.classList.add('active');if(id==='home')renderHome();if(id==='plantings')renderPlants();scrollTo(0,0)}function showNewPlant(){document.getElementById('plantForm').reset();go('newPlant')}
@@ -245,6 +246,105 @@ if (existingScout) {
 
 }
 } 
+  async function loadHarvestsCloud() {
+
+  const {data, error} = await supabaseClient
+
+    .from('harvests')
+
+    .select('*');
+
+  if (error) {
+
+    console.error('Error loading harvests:', error);
+
+    return;
+
+  }
+
+  const {data: cloudPlants, error: plantsError} = await supabaseClient
+
+    .from('plantings')
+
+    .select('id,ref');
+
+  if (plantsError) {
+
+    console.error('Error matching harvests:', plantsError);
+
+    return;
+
+  }
+
+  const plantRefs = new Map(
+
+    cloudPlants.map(p => [String(p.id), p.ref])
+
+  );
+
+  for (const h of data) {
+
+    const ref = plantRefs.get(String(h.planting_id));
+
+    const p = db.plants.find(x => x.ref === ref);
+
+    if (!p) continue;
+
+    if (!Array.isArray(p.harvests)) {
+
+      p.harvests = p.harvest ? [p.harvest] : [];
+
+    }
+
+    const existing = p.harvests.find(x =>
+
+      (x.cloudId != null && String(x.cloudId) === String(h.id)) ||
+
+      (x.date === h.harvest_date &&
+
+       x.status === h.status &&
+
+       Number(x.pounds) === Number(h.pounds) &&
+
+       Number(x.pallets) === Number(h.pallets))
+
+    );
+
+    const record = existing || {};
+
+    Object.assign(record, {
+
+      cloudId: h.id,
+
+      date: h.harvest_date,
+
+      status: h.status,
+
+      pounds: h.pounds,
+
+      pallets: h.pallets,
+
+      customer: h.customer,
+
+      observations: h.observations
+
+    });
+
+    if (!existing) p.harvests.push(record);
+
+  }
+
+  for (const p of db.plants) {
+
+    if (p.harvests?.length) {
+
+      p.harvest = p.harvests[p.harvests.length - 1];
+
+    }
+
+  }
+
+}
   function fmt(d){if(!d)return '—';return new Date(d+'T12:00:00').toLocaleDateString('es-US',{month:'short',day:'numeric',year:'numeric'})}function expected(p){return Math.round((+p.acres||0)*(yields[p.product]||0))}
 async function savePlantingCloud(p){
 
