@@ -193,9 +193,25 @@ if(plantsError){
 
   if(!Array.isArray(p.scouts))p.scouts=[];
 
-  const alreadyExists=p.scouts.some(x=>String(x.cloudId)===String(s.id));
+  const existingScout = p.scouts.find(x =>
 
-  if(alreadyExists)continue;
+  (x.cloudId != null && String(x.cloudId) === String(s.id)) ||
+
+  (x.date === s.scout_date &&
+
+   (x.photos || []).some(url => (s.photo_urls || []).includes(url)))
+
+);
+
+if (existingScout) {
+
+  existingScout.cloudId = s.id;
+
+  continue;
+
+}
+
+  
 
   p.scouts.push({
 
@@ -301,7 +317,7 @@ function scoutForm(){let p=db.plants.find(x=>x.id===current);detailBody.innerHTM
 
   }
 if(s.photos?.length){s.photos=await uploadScoutPhotos(s.photos,plant.id);}
-  const {error}=await supabaseClient.from('scouts').insert({
+  const {data: savedScout,error}=await supabaseClient.from('scouts').insert({
 
     planting_id:plant.id,
 
@@ -327,7 +343,7 @@ if(s.photos?.length){s.photos=await uploadScoutPhotos(s.photos,plant.id);}
 
     notes:s.notes||null,
 photo_urls:s.photos||[]
-  });
+}).select('id').single();  
 
   if(error){
 
@@ -337,7 +353,7 @@ photo_urls:s.photos||[]
 
   }
     
-
+s.cloudId = savedScout.id;
   return true;
 
 }
