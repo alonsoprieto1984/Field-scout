@@ -460,7 +460,7 @@ s.cloudId = savedScout.id;
 
     .from('plantings')
 
-    .update({status: 'Growing'})
+    .update({status: 'Growing', weekly_scouting: true})
 
     .eq('id', plant.id);
 
@@ -471,7 +471,7 @@ s.cloudId = savedScout.id;
   } else {
 
     p.status = 'Growing';
-
+p.weeklyScouting = true;
   }
 
 }
