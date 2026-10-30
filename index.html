@@ -93,6 +93,41 @@ async function loadPlantingsCloud(){
   }
 
   console.log('Plantings found in Supabase:',data.length);
+  for (const cloud of data) {
+
+  const local = db.plants.find(p => p.ref === cloud.ref);
+
+  if (!local) continue;
+
+  Object.assign(local, {
+
+    product: cloud.product,
+
+    variety: cloud.variety,
+
+    ranch: cloud.ranch,
+
+    lot: cloud.lot,
+
+    customer: cloud.customer,
+
+    acres: cloud.acres,
+
+    beds: cloud.beds,
+
+    wetDate: cloud.wet_date,
+
+    clipDays: cloud.clip_days,
+
+    harvestDate: cloud.harvest_date,
+
+    status: cloud.status,
+
+    weeklyScouting: cloud.weekly_scouting
+
+  });
+
+}
 db.plants=[...db.plants,...data.filter(p=>!db.plants.some(local=>local.ref===p.ref)).map(p=>({
 
   ...p,
