@@ -1001,7 +1001,15 @@ const dateCheck = workbook.SheetNames.map(name => {
 
     (row ? row.slice(0, 16).map((v, i) =>
 
-      i + ': ' + String(v)
+      i + ': ' + (
+
+  (i === 0 || i === 2) && typeof v === 'number'
+
+    ? XLSX.SSF.format('mm/dd/yyyy', v)
+
+    : String(v)
+
+)
 
     ).join('\n') : 'No matching planting');
 
