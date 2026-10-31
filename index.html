@@ -954,7 +954,13 @@ const samples = workbook.SheetNames.map(sheetName => {
 
 });
 
-alert('First planting from each sheet:\n' + samples.join('\n'));
+const preview = document.getElementById('excelPreview');
+
+preview.textContent = 'Review Plantings:\n\n' + samples.join('\n\n');
+
+preview.style.whiteSpace = 'pre-line';
+
+preview.classList.remove('hidden');
 
   } catch (error) {
 
