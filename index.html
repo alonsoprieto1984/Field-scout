@@ -952,7 +952,7 @@ const samples = workbook.SheetNames.flatMap(sheetName => {
 
     .map(row => {
 
-      const ref = sheetName === 'Spring Mix' ? row[9] : row[10];
+      const ref = ['Spring Mix', 'Cress'].includes(sheetName) ? row[9] : row[10];
 
       
 
