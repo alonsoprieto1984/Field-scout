@@ -974,7 +974,35 @@ if (refText) seenRefs.add(refText);
 
 if (status === 'New') {
 
-  importCandidates.push({ ref: refText, sheetName, row });
+  
+
+importCandidates.push({
+
+  ref: refText,
+
+  sheetName,
+
+  row,
+
+  product: String(row[5]).trim().toLowerCase() === 'arugula' ? 'Arúgula' :
+
+           String(row[5]).trim().toLowerCase() === 'spinach' ? 'Espinaca' : 'Cress',
+
+  landlord: row[6] || '',
+
+  ranch: row[7] || '',
+
+  lot: row[8] || '',
+
+  variety: ['Spring Mix', 'Cress'].includes(sheetName) ? '' : (row[12] || ''),
+
+  customer: 'B&W',
+
+  acres: Number(row[3]) || 0,
+
+  beds: Number(row[4]) || 0
+
+});
 
 }
 return '[' + status + '] ' + sheetName + ': ' + ref +
