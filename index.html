@@ -970,7 +970,15 @@ return '[' + status + '] ' + sheetName + ': ' + ref +
 
         ' | ' + row[7] + ' | ' + row[8] +
 
-        ' | ' + row[3] + ' acres | ' + row[4] + ' beds';
+        
+
+' | ' + row[3] + ' acres | ' + row[4] + ' beds' +
+
+' | Wet Date: ' + (typeof row[0] === 'number' ? XLSX.SSF.format('mm/dd/yyyy', row[0]) : (row[0] || '—')) +
+
+' | Clip Days: ' + (row[1] || '—') +
+
+' | Projected Harvest: ' + (typeof row[2] === 'number' ? XLSX.SSF.format('mm/dd/yyyy', row[2]) : (row[2] || '—'));
 
     });
 
