@@ -922,7 +922,9 @@ for (const sheetName of workbook.SheetNames) {
 
 
 
-const samples = workbook.SheetNames.map(sheetName => {
+
+
+const samples = workbook.SheetNames.flatMap(sheetName => {
 
   const rows = XLSX.utils.sheet_to_json(
 
@@ -932,25 +934,29 @@ const samples = workbook.SheetNames.map(sheetName => {
 
   );
 
-  const row = rows.find(r =>
+  return rows
 
-    ['arugula', 'spinach', 'upland cress'].includes(
+    .filter(row =>
 
-      String(r[5] || '').trim().toLowerCase()
+      ['arugula', 'spinach', 'upland cress'].includes(
+
+        String(row[5] || '').trim().toLowerCase()
+
+      )
 
     )
 
-  );
+    .map(row => {
 
-  if (!row) return sheetName + ': No matching plantings';
+      const ref = sheetName === 'Spring Mix' ? row[9] : row[10];
 
-  const ref = sheetName === 'Spring Mix' ? row[9] : row[10];
+      return sheetName + ': ' + ref +
 
-  return sheetName + ': ' + ref +
+        ' | ' + row[7] + ' | ' + row[8] +
 
-    ' | ' + row[7] + ' | ' + row[8] +
+        ' | ' + row[3] + ' acres';
 
-    ' | ' + row[3] + ' acres';
+    });
 
 });
 
