@@ -956,11 +956,15 @@ const refText = String(ref ?? '').trim().toUpperCase();
 
 const status = !refText ? 'Needs Review' :
 
+  seenRefs.has(refText) ? 'Duplicate in Excel' :
+
   db.plants.some(p =>
 
     String(p.ref ?? '').trim().toUpperCase() === refText
 
   ) ? 'Already Exists' : 'New';
+
+if (refText) seenRefs.add(refText);
 
 return '[' + status + '] ' + sheetName + ': ' + ref +
 
