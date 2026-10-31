@@ -927,6 +927,7 @@ for (const sheetName of workbook.SheetNames) {
 
 
 const importCandidates = [];
+    const selectedImportRefs = new Set();
 const seenRefs = new Set();
 const samples = workbook.SheetNames.flatMap(sheetName => {
 
