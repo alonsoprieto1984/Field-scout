@@ -1054,6 +1054,37 @@ selectionTitle.textContent = 'Select Plantings (0 selected)';
 selectionPanel.appendChild(selectionTitle);
 
 preview.prepend(selectionPanel);
+    
+
+importCandidates.forEach(item => {
+
+  const label = document.createElement('label');
+
+  const checkbox = document.createElement('input');
+
+  checkbox.type = 'checkbox';
+
+  checkbox.style.width = 'auto';
+
+  checkbox.style.marginRight = '10px';
+
+  checkbox.onchange = () => {
+
+    if (checkbox.checked) selectedImportRefs.add(item.ref);
+
+    else selectedImportRefs.delete(item.ref);
+
+    selectionTitle.textContent = 'Select Plantings (' + selectedImportRefs.size + ' selected)';
+
+  };
+
+  label.appendChild(checkbox);
+
+  label.appendChild(document.createTextNode(item.ref + ' | ' + item.row[7] + ' | ' + item.row[8]));
+
+  selectionPanel.appendChild(label);
+
+});
   } catch (error) {
 
     alert('Error reading Excel: ' + error.message);
