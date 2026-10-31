@@ -1035,7 +1035,9 @@ const dateCheck = workbook.SheetNames.map(name => {
 
 });
 
-preview.textContent = 'Review Plantings:\n\n' + samples.join('\n\n');
+    
+
+preview.textContent = 'New Plantings: ' + importCandidates.length + '\nTotal Reviewed: ' + samples.length + '\n\nReview Plantings:\n\n' + samples.join('\n\n');
 
 preview.style.whiteSpace = 'pre-line';
 
