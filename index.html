@@ -978,7 +978,8 @@ return '[' + status + '] ' + sheetName + ': ' + ref +
 
 ' | Clip Days: ' + (row[1] || '—') +
 
-' | Projected Harvest: ' + (typeof row[2] === 'number' ? XLSX.SSF.format('mm/dd/yyyy', row[2]) : (row[2] || '—'));
+' | Projected Harvest: ' + (typeof row[2] === 'number' ? XLSX.SSF.format('mm/dd/yyyy', row[2]) : (row[2] || '—'))+
+  ' | Variety: ' + (sheetName === 'Spring Mix' ? '—' : (row[12] || '—'));
 
     });
 
