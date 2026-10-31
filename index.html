@@ -977,8 +977,37 @@ return '[' + status + '] ' + sheetName + ': ' + ref +
 });
 
 const preview = document.getElementById('excelPreview');
+    
 
-preview.textContent = 'Review Plantings:\n\n' + samples.join('\n\n');
+const dateCheck = workbook.SheetNames.map(name => {
+
+  const rows = XLSX.utils.sheet_to_json(workbook.Sheets[name], {
+
+    header: 1, range: 5, defval: ''
+
+  });
+
+  const row = rows.find(r =>
+
+    ['arugula', 'spinach', 'upland cress'].includes(
+
+      String(r[5] || '').trim().toLowerCase()
+
+    )
+
+  );
+
+  return name + ':\n' +
+
+    (row ? row.slice(0, 16).map((v, i) =>
+
+      i + ': ' + String(v)
+
+    ).join('\n') : 'No matching planting');
+
+});
+
+preview.textContent = 'Excel Column Check:\n\n' + dateCheck.join('\n\n');
 
 preview.style.whiteSpace = 'pre-line';
 
