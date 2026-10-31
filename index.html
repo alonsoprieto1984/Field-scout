@@ -920,17 +920,41 @@ for (const sheetName of workbook.SheetNames) {
 
 }
 
-alert(
 
-  'Excel read successfully!\n' +
 
-  'Arugula: ' + counts.Arugula + '\n' +
+const samples = workbook.SheetNames.map(sheetName => {
 
-  'Spinach: ' + counts.Spinach + '\n' +
+  const rows = XLSX.utils.sheet_to_json(
 
-  'Cress: ' + counts.Cress
+    workbook.Sheets[sheetName],
 
-);
+    {header: 1, range: 5, defval: ''}
+
+  );
+
+  const row = rows.find(r =>
+
+    ['arugula', 'spinach', 'upland cress'].includes(
+
+      String(r[5] || '').trim().toLowerCase()
+
+    )
+
+  );
+
+  if (!row) return sheetName + ': No matching plantings';
+
+  const ref = sheetName === 'Spring Mix' ? row[9] : row[10];
+
+  return sheetName + ': ' + ref +
+
+    ' | ' + row[7] + ' | ' + row[8] +
+
+    ' | ' + row[3] + ' acres';
+
+});
+
+alert('First planting from each sheet:\n' + samples.join('\n'));
 
   } catch (error) {
 
