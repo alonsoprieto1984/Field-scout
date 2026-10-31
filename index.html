@@ -888,7 +888,49 @@ document.getElementById('excelFileInput').addEventListener('change', async funct
 
     const workbook = XLSX.read(data, {type: 'array'});
 
-    alert('Excel opened successfully!\nSheets: ' + workbook.SheetNames.join(', '));
+    
+
+let counts = {Arugula: 0, Spinach: 0, Cress: 0};
+
+for (const sheetName of workbook.SheetNames) {
+
+  const sheet = workbook.Sheets[sheetName];
+
+  const rows = XLSX.utils.sheet_to_json(sheet, {
+
+    header: 1,
+
+    range: 5,
+
+    defval: ''
+
+  });
+
+  for (const row of rows) {
+
+    const product = String(row[5] || '').trim().toLowerCase();
+
+    if (product === 'arugula') counts.Arugula++;
+
+    if (product === 'spinach') counts.Spinach++;
+
+    if (product === 'upland cress') counts.Cress++;
+
+  }
+
+}
+
+alert(
+
+  'Excel read successfully!\n' +
+
+  'Arugula: ' + counts.Arugula + '\n' +
+
+  'Spinach: ' + counts.Spinach + '\n' +
+
+  'Cress: ' + counts.Cress
+
+);
 
   } catch (error) {
 
