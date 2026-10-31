@@ -970,6 +970,12 @@ const status = !refText ? 'Needs Review' :
 
 if (refText) seenRefs.add(refText);
 
+
+if (status === 'New') {
+
+  importCandidates.push({ ref: refText, sheetName, row });
+
+}
 return '[' + status + '] ' + sheetName + ': ' + ref +
 
         ' | ' + row[7] + ' | ' + row[8] +
