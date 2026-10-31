@@ -874,5 +874,29 @@ function editPlanting(id) {
 }  
   
   
-  
+
+
+document.getElementById('excelFileInput').addEventListener('change', async function(event) {
+
+  const file = event.target.files[0];
+
+  if (!file) return;
+
+  try {
+
+    const data = await file.arrayBuffer();
+
+    const workbook = XLSX.read(data, {type: 'array'});
+
+    alert('Excel opened successfully!\nSheets: ' + workbook.SheetNames.join(', '));
+
+  } catch (error) {
+
+    alert('Error reading Excel: ' + error.message);
+
+  }
+
+  event.target.value = '';
+
+});  
 </script></body></html>
