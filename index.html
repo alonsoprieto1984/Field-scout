@@ -1044,6 +1044,16 @@ preview.style.whiteSpace = 'pre-line';
 
 preview.classList.remove('hidden');
 
+
+const selectionPanel = document.createElement('details');
+
+const selectionTitle = document.createElement('summary');
+
+selectionTitle.textContent = 'Select Plantings (0 selected)';
+
+selectionPanel.appendChild(selectionTitle);
+
+preview.prepend(selectionPanel);
   } catch (error) {
 
     alert('Error reading Excel: ' + error.message);
