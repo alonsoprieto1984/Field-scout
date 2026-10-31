@@ -950,7 +950,19 @@ const samples = workbook.SheetNames.flatMap(sheetName => {
 
       const ref = sheetName === 'Spring Mix' ? row[9] : row[10];
 
-      return sheetName + ': ' + ref +
+      
+
+const refText = String(ref ?? '').trim().toUpperCase();
+
+const status = !refText ? 'Needs Review' :
+
+  db.plants.some(p =>
+
+    String(p.ref ?? '').trim().toUpperCase() === refText
+
+  ) ? 'Already Exists' : 'New';
+
+return '[' + status + '] ' + sheetName + ': ' + ref +
 
         ' | ' + row[7] + ' | ' + row[8] +
 
