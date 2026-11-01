@@ -1163,9 +1163,99 @@ importButton.textContent = 'Import Selected';
 
 importButton.style.marginTop = '15px';
 
-importButton.onclick = () => {
+importButton.onclick = async () => {
 
-  alert('Selected plantings: ' + selectedImportRefs.size);
+  const selected = importCandidates.filter(item =>
+
+    selectedImportRefs.has(item.ref)
+
+  );
+
+  if (selected.length === 0) {
+
+    alert('Select at least one planting.');
+
+    return;
+
+  }
+
+  let imported = 0;
+
+  let skipped = 0;
+
+  importButton.disabled = true;
+
+  try {
+
+    for (const item of selected) {
+
+      const { data: existing, error } = await supabaseClient
+
+        .from('plantings')
+
+        .select('id')
+
+        .eq('ref', item.ref)
+
+        .limit(1);
+
+      if (error) throw error;
+
+      if (existing.length || db.plants.some(p =>
+
+        p.ref.trim().toUpperCase() === item.ref.trim().toUpperCase()
+
+      )) {
+
+        skipped++;
+
+        continue;
+
+      }
+
+      const planting = {
+
+        ...item,
+
+        id: crypto.randomUUID(),
+
+        status: 'Projected',
+
+        scouts: [],
+
+        harvest: null
+
+      };
+
+      const saved = await savePlantingCloud(planting);
+
+      if (!saved) {
+
+        throw new Error('Could not save ' + item.ref);
+
+      }
+
+      db.plants.unshift(planting);
+
+      imported++;
+
+    }
+
+    save();
+
+    alert('Imported: ' + imported + '\nSkipped: ' + skipped);
+
+  } catch (error) {
+
+    save();
+
+    alert('Import stopped: ' + error.message);
+
+  } finally {
+
+    importButton.disabled = false;
+
+  }
 
 };
 
