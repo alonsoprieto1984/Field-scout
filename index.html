@@ -1090,7 +1090,21 @@ const dateCheck = workbook.SheetNames.map(name => {
 
 });
 
-    
+
+
+const firstCandidate = importCandidates[0];
+
+const datePreview = firstCandidate
+
+  ? 'First Planting: ' + firstCandidate.ref +
+
+    ' | Wet Date: ' + firstCandidate.wetDate +
+
+    ' | Clip Days: ' + firstCandidate.clipDays +
+
+    ' | Harvest Date: ' + firstCandidate.harvestDate
+
+  : 'No new plantings';    
 
 preview.textContent = 'New Plantings: ' + importCandidates.length + '\nTotal Reviewed: ' + samples.length + '\n\nReview Plantings:\n\n' + samples.join('\n\n');
 
