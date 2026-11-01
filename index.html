@@ -1155,6 +1155,21 @@ importCandidates.forEach(item => {
   selectionPanel.appendChild(label);
 
 });
+    const importButton = document.createElement('button');
+
+importButton.type = 'button';
+
+importButton.textContent = 'Import Selected';
+
+importButton.style.marginTop = '15px';
+
+importButton.onclick = () => {
+
+  alert('Selected plantings: ' + selectedImportRefs.size);
+
+};
+
+selectionPanel.appendChild(importButton);
   } catch (error) {
 
     alert('Error reading Excel: ' + error.message);
