@@ -888,6 +888,7 @@ function editPlanting(id) {
   const deleteBtn = document.getElementById('deletePlantBtn');
 
 deleteBtn.onclick = () => deletePlanting(p.id);
+  deleteBtn.disabled = true;
 }  
   
 
