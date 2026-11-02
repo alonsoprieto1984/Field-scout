@@ -770,7 +770,17 @@ function editPlanting(id) {
         <button type="button" id="saveEditBtn" disabled>Save Changes</button>
 
       </div>
+<div class="full" style="margin-top:15px;">
 
+  <button type="button" id="deletePlantBtn"
+
+    style="background:#b33a3a;color:white;">
+
+    Delete Planting
+
+  </button>
+
+</div>
     </form>
 
   `;
@@ -875,7 +885,73 @@ function editPlanting(id) {
     }
 
   };
+  const deleteBtn = document.getElementById('deletePlantBtn');
+
+deleteBtn.onclick = () => deletePlanting(p.id);
 }  
+  
+
+async function deletePlanting(id) {
+
+  const p = db.plants.find(x => x.id === id);
+
+  if (!p) return;
+
+  const confirmed = confirm(
+
+    'Are you sure you want to permanently delete planting ' +
+
+    p.ref +
+
+    '? This action cannot be undone.'
+
+  );
+
+  if (!confirmed) return;
+
+
+try {
+
+  const { data: planting, error } = await supabaseClient
+
+    .from('plantings')
+
+    .select('id')
+
+    .eq('ref', p.ref)
+
+    .single();
+
+  if (error || !planting) {
+
+    throw new Error(error?.message || 'Planting not found');
+
+  }
+
+  const plantingId = planting.id;
+
+
+const { data: photos, error: photoError } =
+
+  await supabaseClient.storage
+
+    .from('Scout-photos')
+
+    .list(String(plantingId));
+
+if (photoError) throw photoError;
+
+const photoPaths = (photos || [])
+
+  .filter(file => file.name && file.id)
+
+  .map(file => `${plantingId}/${file.name}`);
+} catch (err) {
+
+  alert('Delete failed: ' + err.message);
+
+}
+}
   
   
 
