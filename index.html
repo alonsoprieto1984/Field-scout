@@ -969,6 +969,11 @@ if (!deleted || deleted.length !== 1) {
   throw new Error('Planting was not deleted');
 
 } 
+  db.plants = db.plants.filter(x => x.id !== id);
+
+save();
+
+render();
 } catch (err) {
 
   alert('Delete failed: ' + err.message);
