@@ -948,19 +948,27 @@ const photoPaths = (photos || [])
 
   .map(file => `${plantingId}/${file.name}`);
 
-  if (photoPaths.length > 0) {
+ const { data: deleted, error: deleteError } =
 
-  const { error: removeError } =
+  await supabaseClient
 
-    await supabaseClient.storage
+    .from('plantings')
 
-      .from('Scout-photos')
+    .delete()
 
-      .remove(photoPaths);
+    .eq('id', plantingId)
 
-  if (removeError) throw removeError;
+    .eq('ref', p.ref)
 
-}
+    .select('id');
+
+if (deleteError) throw deleteError;
+
+if (!deleted || deleted.length !== 1) {
+
+  throw new Error('Planting was not deleted');
+
+} 
 } catch (err) {
 
   alert('Delete failed: ' + err.message);
