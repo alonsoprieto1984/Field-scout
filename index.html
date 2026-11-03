@@ -70,6 +70,24 @@ const KEY='fieldScoutV1';let storageOK=true;let db={plants:[]};try{db=JSON.parse
 
   }
 
+
+const {data: roleData, error: roleError} = await supabaseClient
+
+  .from('user_roles')
+
+  .select('role')
+
+  .single();
+
+if (roleError || !['admin', 'viewer'].includes(roleData?.role)) {
+
+  msg.textContent = 'User access not configured.';
+
+  return;
+
+}
+
+window.fieldScoutRole = roleData.role;
   msg.textContent='Sesión iniciada correctamente.';
     document.getElementById('appNav').style.display='';
 await loadPlantingsCloud();
