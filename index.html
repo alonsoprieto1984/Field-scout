@@ -88,6 +88,19 @@ if (roleError || !['admin', 'viewer'].includes(roleData?.role)) {
 }
 
 window.fieldScoutRole = roleData.role;
+ 
+
+document.querySelectorAll(
+
+  '[onclick="showNewPlant()"], #importExcelBtn'
+
+).forEach(button => {
+
+  button.style.display =
+
+    roleData.role === 'viewer' ? 'none' : '';
+
+});   
   msg.textContent='Sesión iniciada correctamente.';
     document.getElementById('appNav').style.display='';
 await loadPlantingsCloud();
