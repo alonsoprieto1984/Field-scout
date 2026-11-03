@@ -132,6 +132,11 @@ async function loadPlantingsCloud(){
   }
 
   console.log('Plantings found in Supabase:',data.length);
+  
+
+const cloudRefs = new Set(data.map(p => p.ref));
+
+db.plants = db.plants.filter(p => cloudRefs.has(p.ref));
   for (const cloud of data) {
 
   const local = db.plants.find(p => p.ref === cloud.ref);
