@@ -969,6 +969,27 @@ if (!deleted || deleted.length !== 1) {
   throw new Error('Planting was not deleted');
 
 } 
+  
+
+if (photoPaths.length > 0) {
+
+  const { error: removeError } =
+
+    await supabaseClient.storage
+
+      .from('Scout-photos')
+
+      .remove(photoPaths);
+
+  if (removeError) {
+
+    console.error('Photo cleanup failed:', removeError);
+
+    alert('Planting deleted, but some photos may remain in Storage.');
+
+  }
+
+}
   db.plants = db.plants.filter(x => x.id !== id);
 
 save();
