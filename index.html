@@ -677,6 +677,8 @@ openPlant = function(id) {
 
   openPlantBeforeEdit(id);
 
+
+if (window.fieldScoutRole === 'viewer') return;
   const actions = detailBody.querySelector('.actions');
 
   if (!actions) return;
