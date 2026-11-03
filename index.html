@@ -688,6 +688,8 @@ openPlant = function(id) {
 
 if (window.fieldScoutRole === 'viewer') {
 
+
+detailBody.querySelectorAll('[onclick^="toggleWeekly("]').forEach(button => button.style.display = 'none');
   detailBody.querySelectorAll('.actions a').forEach(button => {
 
     button.style.display = 'none';
