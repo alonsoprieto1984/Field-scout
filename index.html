@@ -969,7 +969,11 @@ if (!deleted || deleted.length !== 1) {
   throw new Error('Planting was not deleted');
 
 } 
-  
+db.plants = db.plants.filter(x => x.id !== id);
+
+save();
+
+go('plantings');  
 
 if (photoPaths.length > 0) {
 
@@ -990,11 +994,7 @@ if (photoPaths.length > 0) {
   }
 
 }
-  db.plants = db.plants.filter(x => x.id !== id);
-
-save();
-
-go('plantings');
+  
 } catch (err) {
 
   alert('Delete failed: ' + err.message);
