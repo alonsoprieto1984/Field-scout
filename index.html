@@ -678,7 +678,19 @@ openPlant = function(id) {
   openPlantBeforeEdit(id);
 
 
-if (window.fieldScoutRole === 'viewer') return;
+
+
+if (window.fieldScoutRole === 'viewer') {
+
+  detailBody.querySelectorAll('.actions a').forEach(button => {
+
+    button.style.display = 'none';
+
+  });
+
+  return;
+
+}
   const actions = detailBody.querySelector('.actions');
 
   if (!actions) return;
