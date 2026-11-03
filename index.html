@@ -554,6 +554,61 @@ function weekStart(d=new Date()){let x=new Date(d);x.setHours(0,0,0,0);let n=x.g
 const oldRenderHome=renderHome;renderHome=function(){oldRenderHome();let active=db.plants.filter(p=>!['Harvested','Closed','No Harvest'].includes(p.status));mPending.textContent=active.reduce((n,p)=>n+pendingFor(p),0);mScouts.textContent=active.reduce((n,p)=>n+scoutsThisWeek(p),0);let lab=document.querySelector('#mScouts+span');if(lab)lab.textContent='Scouts This Week';let box=document.getElementById('weeklyPending');if(!box){let h=[...document.querySelectorAll('#home h2')].find(x=>x.textContent.includes('Upcoming Harvests'));let title=document.createElement('h2');title.textContent='Pending Scouts';box=document.createElement('div');box.id='weeklyPending';h.parentNode.insertBefore(title,h);h.parentNode.insertBefore(box,h)}let a=active.filter(p=>pendingFor(p)>0).sort((x,y)=>scoutsThisWeek(x)-scoutsThisWeek(y));box.innerHTML=a.length?a.map(p=>`<div class="card plant" onclick="openPlant('${p.id}')"><div class="item"><div><strong>${esc(p.ref)} · ${esc(p.product)}</strong><div class="muted">${esc(p.ranch)} / ${esc(p.lot)}</div></div><span class="tag">${scoutsThisWeek(p)}/2</span></div><div class="muted"> ${pendingFor(p)} scout${pendingFor(p)==1?'':'s'} Remaining This Week</div></div>`).join(''):'<div class="card empty">All Scouting Is Up to Date This Week.</div>'}
   const oldOpenPlant=openPlant;openPlant=function(id){oldOpenPlant(id);document.querySelector('#detail > .back').style.display=''; let p=db.plants.find(x=>x.id===id);if(!p)return;let actions=detailBody.querySelector('.actions');if(!actions)return;let c=document.createElement('div');c.className='card';c.innerHTML=`<div class="item"><div><b>Weekly Scouting</b><div style="margin-top:6px;color:var(--brand);font-size:13px;font-weight:650">Scouts This Week: ${scoutsThisWeek(p)} of 2</div></div><button class="${trackingOn(p)?'danger':'secondary'}" onclick="toggleWeekly('${p.id}')">${trackingOn(p)?'Pause Scouting':'Start Tracking'}</button></div>`;actions.parentNode.insertBefore(c,actions)};function toggleWeekly(id){let p=db.plants.find(x=>x.id===id);if(!p)return;p.weeklyScouting=!trackingOn(p);save();openPlant(id)}document.querySelector('header small').textContent='Planting & Crop Tracking · v2.5';let fix=document.createElement('style');fix.textContent='.btnlink{background:var(--brand)!important}';document.head.appendChild(fix);
   fix.textContent='.btnlink{background:var(--brand)!important;color:white!important}.btnlink.secondary{background:var(--brand2)!important;color:var(--brand)!important}';
+  
+
+toggleWeekly = async function(id) {
+
+  if (window.fieldScoutRole !== 'admin') return;
+
+  const p = db.plants.find(x => x.id === id);
+
+  if (!p) return;
+
+  const newValue = !trackingOn(p);
+
+  const {data: plant, error: findError} = await supabaseClient
+
+    .from('plantings')
+
+    .select('id')
+
+    .eq('ref', p.ref)
+
+    .single();
+
+  if (findError || !plant) {
+
+    alert('Could not find planting in Supabase.');
+
+    return;
+
+  }
+
+  const {data, error} = await supabaseClient
+
+    .from('plantings')
+
+    .update({weekly_scouting: newValue})
+
+    .eq('id', plant.id)
+
+    .select('id');
+
+  if (error || !data?.length) {
+
+    alert('Could not save tracking status.');
+
+    return;
+
+  }
+
+  p.weeklyScouting = newValue;
+
+  save();
+
+  openPlant(id);
+
+};
   async function saveHarvestCloud(h,p){
 
   const {data:plant,error:plantError}=await supabaseClient
