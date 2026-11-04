@@ -57,7 +57,9 @@ const KEY='fieldScoutV1';let storageOK=true;let db={plants:[]};try{db=JSON.parse
   }
 
   window.fieldScoutRole = null;
+clearTimeout(inactivityTimer);
 
+inactivityTimer = null;
   db = { plants: [] };
 
   localStorage.removeItem(KEY);
@@ -75,6 +77,76 @@ const KEY='fieldScoutV1';let storageOK=true;let db={plants:[]};try{db=JSON.parse
   window.location.hash = '';
 
 }
+ const INACTIVITY_LIMIT = 30 * 60 * 1000;
+
+let lastActivity = Date.now();
+
+let inactivityTimer = null;
+ function resetInactivityTimer() {
+
+  if (!window.fieldScoutRole) return;
+
+  lastActivity = Date.now();
+
+  clearTimeout(inactivityTimer);
+
+  inactivityTimer = setTimeout(checkInactivity, INACTIVITY_LIMIT);
+
+}
+
+async function checkInactivity() {
+
+  if (!window.fieldScoutRole) return;
+
+  const elapsed = Date.now() - lastActivity;
+
+  if (elapsed >= INACTIVITY_LIMIT) {
+
+    await logoutFieldScout();
+
+  } else {
+
+    clearTimeout(inactivityTimer);
+
+    inactivityTimer = setTimeout(
+
+      checkInactivity,
+
+      INACTIVITY_LIMIT - elapsed
+
+    );
+
+  }
+
+}
+ ['pointerdown', 'keydown', 'input'].forEach(eventName => {
+
+  document.addEventListener(eventName, () => {
+
+    if (!window.fieldScoutRole) return;
+
+    if (Date.now() - lastActivity >= INACTIVITY_LIMIT) {
+
+      checkInactivity();
+
+      return;
+
+    }
+
+    resetInactivityTimer();
+
+  });
+
+});
+ document.addEventListener('visibilitychange', () => {
+
+  if (!document.hidden && window.fieldScoutRole) {
+
+    checkInactivity();
+
+  }
+
+});
   async function loginFieldScout(){
 
   const email=document.getElementById('loginEmail').value.trim();
@@ -144,6 +216,7 @@ await loadPlantingsCloud();
     await loadScoutsCloud();
     await loadHarvestsCloud();
     go('home');
+    resetInactivityTimer();
 }
 function save(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){storageOK=false}renderHome();renderPlants();return storageOK}function go(id){document.querySelectorAll('main section').forEach(x=>x.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));let t=document.getElementById('tab-'+id);if(t)t.classList.add('active');if(id==='home')renderHome();if(id==='plantings')renderPlants();scrollTo(0,0)}function showNewPlant(){document.getElementById('plantForm').reset();go('newPlant')}
 async function loadPlantingsCloud(){
