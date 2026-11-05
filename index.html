@@ -1680,7 +1680,11 @@ importButton.onclick = async () => {
     }
 
     save();
+preview.replaceChildren();
 
+preview.classList.add('hidden');
+
+selectedImportRefs.clear();
     alert('Imported: ' + imported + '\nSkipped: ' + skipped);
 
   } catch (error) {
