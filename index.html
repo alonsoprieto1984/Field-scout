@@ -1738,4 +1738,57 @@ selectionPanel.appendChild(importButton);
   event.target.value = '';
 
 });  
+
+
+document.addEventListener('click', function(e) {
+
+  const photo = e.target.closest('#scouts .photoGrid img');
+
+  if (!photo) return;
+
+  const viewer = document.createElement('div');
+
+  viewer.style.cssText = 'position:fixed;inset:0;background:#000e;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:15px;';
+
+  const image = document.createElement('img');
+
+  image.src = photo.src;
+
+  image.style.cssText = 'max-width:100%;max-height:75vh;object-fit:contain;touch-action:pinch-zoom;';
+
+  const controls = document.createElement('div');
+
+  controls.style.cssText = 'display:flex;gap:20px;margin-top:20px;';
+
+  const close = document.createElement('button');
+
+  close.textContent = '✕ Close';
+
+  close.onclick = () => viewer.remove();
+
+  const open = document.createElement('a');
+
+  open.textContent = 'Open Photo';
+
+  open.href = photo.src;
+
+  open.target = '_blank';
+
+  open.rel = 'noopener';
+
+  open.style.cssText = 'background:white;color:#173f29;padding:12px;border-radius:10px;text-decoration:none;';
+
+  controls.append(close, open);
+
+  viewer.append(image, controls);
+
+  viewer.onclick = e => {
+
+    if (e.target === viewer) viewer.remove();
+
+  };
+
+  document.body.appendChild(viewer);
+
+});
 </script></body></html>
