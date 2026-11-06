@@ -644,6 +644,33 @@ function scoutForm(){let p=db.plants.find(x=>x.id===current);detailBody.innerHTM
   return;
 
 }save();openPlant(p.id)}catch(err){alert('ERROR REAL: '+(err?.message||err));}}}
+ document.addEventListener('submit', function(e) {
+
+  if (e.target.id !== 'sf') return;
+
+  if (e.target.dataset.saving === '1') {
+
+    e.preventDefault();
+
+    e.stopImmediatePropagation();
+
+    return;
+
+  }
+
+  e.target.dataset.saving = '1';
+
+  const button = e.target.querySelector('button[type="submit"], button:not([type])');
+
+  if (button) {
+
+    button.disabled = true;
+
+    button.textContent = 'Saving...';
+
+  }
+
+}, true);
   async function saveScoutCloud(s,p){
 
   const {data:plant,error:plantError}=await supabaseClient
