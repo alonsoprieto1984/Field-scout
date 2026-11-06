@@ -1830,6 +1830,58 @@ document.addEventListener('click', function(e) {
   }, {passive:true});
   viewer.append(image, controls);
 
+
+if (photos.length > 1) {
+
+  [-1, 1].forEach(direction => {
+
+    const arrow = document.createElement('button');
+
+    arrow.textContent = direction === -1 ? '‹' : '›';
+
+    arrow.style.cssText = `
+
+      position:absolute;
+
+      top:50%;
+
+      ${direction === -1 ? 'left:10px' : 'right:10px'};
+
+      transform:translateY(-50%);
+
+      background:rgba(0,0,0,0.35);
+
+      color:white;
+
+      font-size:32px;
+
+      padding:4px 12px;
+
+      border-radius:50%;
+
+      z-index:1;
+
+    `;
+
+    arrow.onclick = () => {
+
+      photoIndex = Math.max(0, Math.min(
+
+        photos.length - 1, photoIndex + direction
+
+      ));
+
+      image.src = photos[photoIndex].src;
+
+      open.href = image.src;
+
+    };
+
+    viewer.appendChild(arrow);
+
+  });
+
+}
   viewer.onclick = e => {
 
     if (e.target === viewer) viewer.remove();
