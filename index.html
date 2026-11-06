@@ -1796,6 +1796,38 @@ document.addEventListener('click', function(e) {
 
   controls.append(close, open);
 
+
+  const photos = [...photo.closest('.photoGrid').querySelectorAll('img')];
+
+  let photoIndex = photos.indexOf(photo);
+
+  let touchStartX = 0;
+
+  image.addEventListener('touchstart', e => {
+
+    touchStartX = e.changedTouches[0].screenX;
+
+  }, {passive:true});
+
+  image.addEventListener('touchend', e => {
+
+    const distance = e.changedTouches[0].screenX - touchStartX;
+
+    if (Math.abs(distance) < 50 || photos.length < 2) return;
+
+    photoIndex = Math.max(0, Math.min(
+
+      photos.length - 1,
+
+      photoIndex + (distance < 0 ? 1 : -1)
+
+    ));
+
+    image.src = photos[photoIndex].src;
+
+    open.href = image.src;
+
+  }, {passive:true});
   viewer.append(image, controls);
 
   viewer.onclick = e => {
