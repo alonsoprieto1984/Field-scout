@@ -36,6 +36,10 @@
 
     <input id="loginPassword" type="password" autocomplete="current-password" placeholder="Password">
 
+
+<button type="button" class="secondary" style="margin-top:8px" onclick="const p=document.getElementById('loginPassword');p.type=p.type==='password'?'text':'password';this.textContent=p.type==='password'?'👁 Show Password':'🙈 Hide Password'">👁 Show Password</button>
+
+  
     <button type="button" onclick="loginFieldScout()">Sign In</button>
 
     <div id="loginMessage" class="muted" style="margin-top:10px"></div>
