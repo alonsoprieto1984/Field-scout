@@ -68,7 +68,14 @@
 const SUPABASE_URL='https://rdqbiqyujsnqajpjvufb.supabase.co';
   const SUPABASE_KEY='sb_publishable_pYGlEnz-JqNnbcu2fSjXlA_fo5MEZn0';
   const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-const KEY='fieldScoutV1';let storageOK=true;let db={plants:[]};try{db=JSON.parse(localStorage.getItem(KEY)||'{\"plants\":[]}')}catch(e){storageOK=false;db={plants:[]}}let current=null;const yields={'Arúgula':8500,'Arugula':8500,'Espinaca':10000,'Spinach':10000,'Cress':6000};
+
+
+const stateField = document.createElement('div');
+
+stateField.innerHTML = '<label>State *</label><select name="state" required><option value="">Select State</option><option value="AZ">Arizona (AZ)</option><option value="CA">California (CA)</option></select>';
+
+document.querySelector('#plantForm [name="product"]').closest('div').after(stateField);
+  const KEY='fieldScoutV1';let storageOK=true;let db={plants:[]};try{db=JSON.parse(localStorage.getItem(KEY)||'{\"plants\":[]}')}catch(e){storageOK=false;db={plants:[]}}let current=null;const yields={'Arúgula':8500,'Arugula':8500,'Espinaca':10000,'Spinach':10000,'Cress':6000};
  async function logoutFieldScout() {
 
   const { error } = await supabaseClient.auth.signOut();
