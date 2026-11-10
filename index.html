@@ -1650,9 +1650,21 @@ importButton.type = 'button';
 importButton.textContent = 'Import Selected';
 
 importButton.style.marginTop = '15px';
+const importState = document.createElement('select');
 
+importState.innerHTML = '<option value="">Select State</option><option value="AZ">Arizona (AZ)</option><option value="CA">California (CA)</option>';
+
+importState.style.marginTop = '12px';
+
+selectionPanel.appendChild(importState);
 importButton.onclick = async () => {
+if (!importState.value) {
 
+  alert('Please select AZ or CA before importing.');
+
+  return;
+
+}
   const selected = importCandidates.filter(item =>
 
     selectedImportRefs.has(item.ref)
@@ -1704,7 +1716,7 @@ importButton.onclick = async () => {
       const planting = {
 
         ...item,
-
+state: importState.value,
         id: crypto.randomUUID(),
 
         status: 'Projected',
