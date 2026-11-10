@@ -1797,6 +1797,52 @@ document.addEventListener('click', function(e) {
   controls.append(close, open);
 
 
+const download = document.createElement('button');
+
+download.textContent = '⬇ Download';
+
+download.className = 'secondary';
+
+download.onclick = async () => {
+
+  try {
+
+    const response = await fetch(image.src);
+
+    if (!response.ok) throw new Error('Photo unavailable');
+
+    const blob = await response.blob();
+
+    const file = new File([blob], 'FieldScout-Photo.jpg', {
+
+      type: blob.type || 'image/jpeg'
+
+    });
+
+    if (navigator.canShare?.({files:[file]})) {
+
+      await navigator.share({files:[file]});
+
+    } else {
+
+      window.open(image.src, '_blank');
+
+    }
+
+  } catch (error) {
+
+    if (error.name !== 'AbortError') {
+
+      alert('Use Open Photo to save this image.');
+
+    }
+
+  }
+
+};
+
+controls.appendChild(download);
+
   const photos = [...photo.closest('.photoGrid').querySelectorAll('img')];
 
   let photoIndex = photos.indexOf(photo);
