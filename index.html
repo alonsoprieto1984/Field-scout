@@ -506,7 +506,7 @@ if (existingScout) {
       pallets: h.pallets,
 
       customer: h.customer,
-
+po_number: h.po_number,
       observations: h.observations
 
     });
@@ -947,7 +947,7 @@ toggleWeekly = async function(id) {
       pounds:+h.pounds||0,
 
       pallets:+h.pallets||0,
-
+po_number:h.po_number||null,
       customer:h.customer||null,
 
       observations:h.observations||null
@@ -997,8 +997,72 @@ if (statusError) {
 }
 
 p.harvests.push(h);p.harvest=h;p.status=h.status==='No Harvest'?'No Harvest':h.status==='Harvested'?'Harvested':'Near Harvest';if(h.status!=='Partial')p.weeklyScouting=false;save();openPlant(p.id)}}
+  const originalHarvestFormPO = harvestForm;
+
+harvestForm = function() {
+
+  originalHarvestFormPO();
+
+  const form = document.getElementById('hf');
+
+  const customer = form.querySelector('[name="customer"]');
+
+  const label = document.createElement('label');
+
+  label.textContent = 'PO Number';
+
+  const input = document.createElement('input');
+
+  input.name = 'po_number';
+
+  input.type = 'text';
+
+  input.placeholder = 'Enter PO Number';
+
+  customer.before(label, input);
+
+};
   const openPlantHarvestV26=openPlant;openPlant=function(id){openPlantHarvestV26(id);let p=db.plants.find(x=>x.id===id);if(!p)return;let hs=harvestsOf(p);if(!hs.length)return;let t=harvestTotals(p),exp=expected(p),perAcre=(+p.acres?t.pounds/+p.acres:0),diff=t.pounds-exp,pct=exp?t.pounds/exp*100:0;let box=document.createElement('div');box.innerHTML=`<h2>Harvest Summary</h2><div class="card"><div class="row"><div><b>Total Harvested</b><div>${t.pounds.toLocaleString()} lb</div></div><div><b>Total Pallets</b><div>${t.pallets.toLocaleString()}</div></div><div><b>Actual Yield</b><div>${perAcre.toFixed(0)} lb/acre</div></div><div><b>Expected Yield</b><div>${exp.toLocaleString()} lb</div></div><div><b>Difference</b><div>${diff>=0?'+':''}${diff.toLocaleString()} lb</div></div><div><b>% of Expected</b><div>${pct.toFixed(1)}%</div></div></div><h3 style="font-size:15px;margin:16px 0 8px">Harvest Records</h3>${hs.map(h=>`<div style="padding:9px 0;border-top:1px solid var(--line)"><b>${fmt(h.date)} · ${esc(h.status)}</b><div class="muted">${(+h.pounds||0).toLocaleString()} lb · ${(+h.pallets||0).toLocaleString()} pallets${h.customer?' · '+esc(h.customer):''}</div>${h.observations?`<div style="margin-top:4px">${esc(h.observations)}</div>`:''}</div>`).join('')}</div>`;detailBody.appendChild(box)};document.querySelector('header small').textContent='Planting & Crop Tracking · v2.6';
   const openPlantCleanV26=openPlant;openPlant=function(id){openPlantCleanV26(id);let p=db.plants.find(x=>x.id===id);if(!p||!harvestsOf(p).length)return;let hs=[...detailBody.querySelectorAll('h2')].find(x=>x.textContent.trim()==='Cosecha');if(hs){let c=hs.nextElementSibling;hs.remove();if(c&&c.classList.contains('card'))c.remove()}}
+  const openPlantBeforePO = openPlant;
+
+openPlant = function(id) {
+
+  openPlantBeforePO(id);
+
+  const p = db.plants.find(x => x.id === id);
+
+  if (!p) return;
+
+  const heading = [...detailBody.querySelectorAll('h3')]
+
+    .find(x => x.textContent.trim() === 'Harvest Records');
+
+  if (!heading) return;
+
+  let record = heading.nextElementSibling;
+
+  harvestsOf(p).forEach(h => {
+
+    if (!record) return;
+
+    if (h.po_number) {
+
+      const po = document.createElement('div');
+
+      po.className = 'muted';
+
+      po.textContent = 'PO Number: ' + h.po_number;
+
+      record.appendChild(po);
+
+    }
+
+    record = record.nextElementSibling;
+
+  });
+
+};
   function showReports(){let ps=db.plants||[],acres=ps.reduce((n,p)=>n+(+p.acres||0),0),done=ps.filter(p=>harvestsOf(p).length),expectedTotal=done.reduce((n,p)=>n+expected(p),0),actualTotal=done.reduce((n,p)=>n+harvestTotals(p).pounds,0),harvestAcres=done.reduce((n,p)=>n+(+p.acres||0),0),avg=harvestAcres?actualTotal/harvestAcres:0;document.querySelector('#detail > .back').style.display='none';detailBody.innerHTML=`<button class="back" onclick="go('home')">← Home</button><h2 class="bigtitle">Reports</h2><div class="card"><div class="row"><div><b>Total Plantings</b><div>${ps.length}</div></div><div><b>Total Acres</b><div>${acres.toFixed(1)}</div></div><div><b>Harvested Plantings</b><div>${done.length}</div></div><div><b>Average Yield</b><div>${avg.toFixed(0)} lb/acre</div></div><div><b>Expected Pounds</b><div>${expectedTotal.toLocaleString()}</div></div><div><b>Harvested Pounds</b><div>${actualTotal.toLocaleString()}</div></div></div><h2>Results by Planting</h2>${done.length?done.map(p=>{let t=harvestTotals(p),e=expected(p),pct=e?t.pounds/e*100:0;return `<div class="card item" onclick="openPlant('${p.id}')"><div><b>${esc(p.ref||'No Ref')} · ${esc(p.product||'')}</b><div class="muted">${esc(p.ranch||'')} / ${esc(p.lot||'')}</div><div>${t.pounds.toLocaleString()} lb · ${(+p.acres||0).toLocaleString()} acres · ${pct.toFixed(1)}% of Expected</div></div></div>`}).join(''):`<div class="card muted">No harvests recorded yet.</div>`}`;go('detail')}
   let nav=document.querySelector('.tabs div');if(nav){nav.style.gridTemplateColumns='repeat(4,1fr)';let rb=document.createElement('button');rb.textContent='Reports';rb.onclick=showReports;nav.appendChild(rb)}document.querySelector('header small').textContent='Planting & Crop Tracking · v2.7';
   const reportsOriginal=showReports;
