@@ -669,6 +669,7 @@ renderPlants = function() {
     const ref = name.textContent.split(' · ')[0];
 
     const planting = db.plants.find(p => p.ref === ref);
+    name.textContent = name.textContent.replace('Espinaca', 'Spinach');
 const selectedState = document.getElementById('filterState').value;
 
 if (selectedState && planting?.state !== selectedState) {
