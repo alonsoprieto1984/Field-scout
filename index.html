@@ -1019,7 +1019,7 @@ harvestForm = function() {
 
   input.placeholder = 'Enter PO Number';
 
-  customer.before(label, input);
+  customer.previousElementSibling.before(label, input);
 
 };
   const openPlantHarvestV26=openPlant;openPlant=function(id){openPlantHarvestV26(id);let p=db.plants.find(x=>x.id===id);if(!p)return;let hs=harvestsOf(p);if(!hs.length)return;let t=harvestTotals(p),exp=expected(p),perAcre=(+p.acres?t.pounds/+p.acres:0),diff=t.pounds-exp,pct=exp?t.pounds/exp*100:0;let box=document.createElement('div');box.innerHTML=`<h2>Harvest Summary</h2><div class="card"><div class="row"><div><b>Total Harvested</b><div>${t.pounds.toLocaleString()} lb</div></div><div><b>Total Pallets</b><div>${t.pallets.toLocaleString()}</div></div><div><b>Actual Yield</b><div>${perAcre.toFixed(0)} lb/acre</div></div><div><b>Expected Yield</b><div>${exp.toLocaleString()} lb</div></div><div><b>Difference</b><div>${diff>=0?'+':''}${diff.toLocaleString()} lb</div></div><div><b>% of Expected</b><div>${pct.toFixed(1)}%</div></div></div><h3 style="font-size:15px;margin:16px 0 8px">Harvest Records</h3>${hs.map(h=>`<div style="padding:9px 0;border-top:1px solid var(--line)"><b>${fmt(h.date)} · ${esc(h.status)}</b><div class="muted">${(+h.pounds||0).toLocaleString()} lb · ${(+h.pallets||0).toLocaleString()} pallets${h.customer?' · '+esc(h.customer):''}</div>${h.observations?`<div style="margin-top:4px">${esc(h.observations)}</div>`:''}</div>`).join('')}</div>`;detailBody.appendChild(box)};document.querySelector('header small').textContent='Planting & Crop Tracking · v2.6';
