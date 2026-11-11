@@ -1065,6 +1065,37 @@ openPlant = function(id) {
 };
   function showReports(){let ps=db.plants||[],acres=ps.reduce((n,p)=>n+(+p.acres||0),0),done=ps.filter(p=>harvestsOf(p).length),expectedTotal=done.reduce((n,p)=>n+expected(p),0),actualTotal=done.reduce((n,p)=>n+harvestTotals(p).pounds,0),harvestAcres=done.reduce((n,p)=>n+(+p.acres||0),0),avg=harvestAcres?actualTotal/harvestAcres:0;document.querySelector('#detail > .back').style.display='none';detailBody.innerHTML=`<button class="back" onclick="go('home')">← Home</button><h2 class="bigtitle">Reports</h2><div class="card"><div class="row"><div><b>Total Plantings</b><div>${ps.length}</div></div><div><b>Total Acres</b><div>${acres.toFixed(1)}</div></div><div><b>Harvested Plantings</b><div>${done.length}</div></div><div><b>Average Yield</b><div>${avg.toFixed(0)} lb/acre</div></div><div><b>Expected Pounds</b><div>${expectedTotal.toLocaleString()}</div></div><div><b>Harvested Pounds</b><div>${actualTotal.toLocaleString()}</div></div></div><h2>Results by Planting</h2>${done.length?done.map(p=>{let t=harvestTotals(p),e=expected(p),pct=e?t.pounds/e*100:0;return `<div class="card item" onclick="openPlant('${p.id}')"><div><b>${esc(p.ref||'No Ref')} · ${esc(p.product||'')}</b><div class="muted">${esc(p.ranch||'')} / ${esc(p.lot||'')}</div><div>${t.pounds.toLocaleString()} lb · ${(+p.acres||0).toLocaleString()} acres · ${pct.toFixed(1)}% of Expected</div></div></div>`}).join(''):`<div class="card muted">No harvests recorded yet.</div>`}`;go('detail')}
   let nav=document.querySelector('.tabs div');if(nav){nav.style.gridTemplateColumns='repeat(4,1fr)';let rb=document.createElement('button');rb.textContent='Reports';rb.onclick=showReports;nav.appendChild(rb)}document.querySelector('header small').textContent='Planting & Crop Tracking · v2.7';
+  
+
+function harvestTiming(p) {
+
+  if (!p.harvestDate) return null;
+
+  const dates = harvestsOf(p)
+
+    .filter(h => h.date && h.status !== 'No Harvest')
+
+    .map(h => h.date)
+
+    .sort();
+
+  if (!dates.length) return null;
+
+  const projected = Date.parse(p.harvestDate + 'T12:00:00Z');
+
+  const actual = Date.parse(dates[0] + 'T12:00:00Z');
+
+  if (!Number.isFinite(projected) || !Number.isFinite(actual)) return null;
+
+  const days = Math.round((actual - projected) / 86400000);
+
+  return days === 0 ? 'On Schedule' :
+
+    days > 0 ? days + ' Days Late' :
+
+    Math.abs(days) + ' Days Early';
+
+}
   const reportsOriginal=showReports;
 
 showReports=function(){
@@ -1072,6 +1103,33 @@ showReports=function(){
   let allPlants=db.plants,rf0=window.reportFilters||{from:'',to:'',product:''};db.plants=allPlants.filter(p=>(!rf0.product||p.product===rf0.product)&&(!rf0.from&&!rf0.to||harvestsOf(p).some(h=>(!rf0.from||h.date>=rf0.from)&&(!rf0.to||h.date<=rf0.to))));
   reportsOriginal();
   db.plants=allPlants;
+  
+
+detailBody.querySelectorAll('.card.item').forEach(card => {
+
+  const name = card.querySelector('b');
+
+  if (!name) return;
+
+  const ref = name.textContent.split(' · ')[0];
+
+  const planting = allPlants.find(p => p.ref === ref);
+
+  if (!planting) return;
+
+  const timing = harvestTiming(planting);
+
+  if (!timing) return;
+
+  const line = document.createElement('div');
+
+  line.className = 'muted';
+
+  line.textContent = 'Harvest Timing: ' + timing;
+
+  card.appendChild(line);
+
+});
 
   setTimeout(()=>{
 
