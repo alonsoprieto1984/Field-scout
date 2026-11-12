@@ -1013,6 +1013,37 @@ if (statusError) {
 }
 
 p.harvests.push(h);p.harvest=h;p.status=h.status==='No Harvest'?'No Harvest':h.status==='Harvested'?'Harvested':'Near Harvest';if(h.status!=='Partial')p.weeklyScouting=false;save();openPlant(p.id)}}
+  
+
+document.addEventListener('submit', function(e) {
+
+  if (e.target.id !== 'hf') return;
+
+  const form = e.target;
+
+  if (form.dataset.saving === '1') {
+
+    e.preventDefault();
+
+    e.stopImmediatePropagation();
+
+    return;
+
+  }
+
+  form.dataset.saving = '1';
+
+  const button = form.querySelector('button');
+
+  if (button) {
+
+    button.disabled = true;
+
+    button.textContent = 'Saving...';
+
+  }
+
+}, true);
   const originalHarvestFormPO = harvestForm;
 
 harvestForm = function() {
