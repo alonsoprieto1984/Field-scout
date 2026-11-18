@@ -733,6 +733,45 @@ function openPlant(id){current=id;let p=db.plants.find(x=>x.id===id);if(!p)retur
   const p = db.plants.find(x => x.id === current);
 
   if (p) {
+    
+
+const scout = p.scouts.find(s => String(s.cloudId) === String(cloudId));
+
+const prefix = '/storage/v1/object/public/Scout-photos/';
+
+const photoPaths = (scout?.photos || [])
+
+  .filter(url => typeof url === 'string' && url.includes(prefix))
+
+  .map(url => {
+
+    const path = url.split(prefix)[1]?.split('?')[0];
+
+    try { return decodeURIComponent(path); }
+
+    catch { return null; }
+
+  })
+
+  .filter(Boolean);
+
+if (photoPaths.length) {
+
+  const { error: photoError } = await supabaseClient.storage
+
+    .from('Scout-photos')
+
+    .remove([...new Set(photoPaths)]);
+
+  if (photoError) {
+
+    console.error('Scout photo cleanup failed:', photoError);
+
+    alert('Scout deleted, but some photos could not be removed.');
+
+  }
+
+}
 
     p.scouts = p.scouts.filter(s => String(s.cloudId) !== String(cloudId));
 
