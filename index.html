@@ -68,8 +68,118 @@ lo<!doctype html>
 <section id="loadsPage" class="page hidden">
 
   <h2 class="bigtitle">Loads Harvested</h2>
+<div class="actions">
 
+  <button type="button" id="addLoadBtn">
+
+    + Add Load
+
+  </button>
+
+</div>
   
+
+<form id="loadForm" class="card formgrid hidden">
+
+  <div>
+
+    <label>Harvest Date *</label>
+
+    <input type="date" name="harvest_date" required>
+
+  </div>
+
+  <div>
+
+    <label>PO Number *</label>
+
+    <input name="po_number" required>
+
+  </div>
+
+  <div>
+
+    <label>Commodity *</label>
+
+    <select name="commodity" required>
+
+      <option value="">Select Commodity</option>
+
+      <option>Arúgula</option>
+
+      <option>Spinach</option>
+
+      <option>Cress</option>
+
+    </select>
+
+  </div>
+
+  <div>
+
+    <label>Planting Source *</label>
+
+    <select name="planting_source" required>
+
+      <option value="">Select Source</option>
+
+      <option>B&W</option>
+
+      <option>TLC</option>
+
+    </select>
+
+  </div>
+
+  <div>
+
+    <label>Ranch *</label>
+
+    <input name="ranch" required>
+
+  </div>
+
+  <div>
+
+    <label>Lot *</label>
+
+    <input name="lot" required>
+
+  </div>
+
+  <div>
+
+    <label>Acres *</label>
+
+    <input type="number" name="acres" step="0.01" min="0" required>
+
+  </div>
+
+  <div>
+
+    <label>Pallets *</label>
+
+    <input type="number" name="pallets" min="0" required>
+
+  </div>
+
+  <div>
+
+    <label>Pounds *</label>
+
+    <input type="number" name="pounds" min="0" required>
+
+  </div>
+
+  <div class="full">
+
+    <button type="submit">Save Load</button>
+
+    <button type="button" class="secondary" id="cancelLoadBtn">Cancel</button>
+
+  </div>
+
+</form>
 
 <div id="loadsContent">
 
@@ -2346,4 +2456,31 @@ if (photos.length > 1) {
   document.body.appendChild(viewer);
 
 });
+const addLoadBtn = document.getElementById('addLoadBtn');
+
+const loadForm = document.getElementById('loadForm');
+
+const cancelLoadBtn = document.getElementById('cancelLoadBtn');
+
+addLoadBtn.onclick = () => {
+
+  if (window.fieldScoutRole !== 'admin') return;
+
+  loadForm.reset();
+
+  loadForm.classList.remove('hidden');
+
+  addLoadBtn.style.display = 'none';
+
+};
+
+cancelLoadBtn.onclick = () => {
+
+  loadForm.reset();
+
+  loadForm.classList.add('hidden');
+
+  addLoadBtn.style.display = '';
+
+};
 </script></body></html>
