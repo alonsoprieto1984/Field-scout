@@ -69,7 +69,49 @@ lo<!doctype html>
 
   <h2 class="bigtitle">Loads Harvested</h2>
 
-  <div id="loadsContent"></div>
+  
+
+<div id="loadsContent">
+
+  <div style="overflow-x:auto" class="card">
+
+    <table style="width:100%;min-width:780px;text-align:left;border-collapse:collapse">
+
+      <thead>
+
+        <tr>
+
+          <th>Date</th>
+
+          <th>PO #</th>
+
+          <th>Commodity</th>
+
+          <th>Source</th>
+
+          <th>Ranch</th>
+
+          <th>Lot</th>
+
+          <th>Acres</th>
+
+          <th>Pallets</th>
+
+          <th>Pounds</th>
+
+        </tr>
+
+      </thead>
+
+      <tbody id="loadsTableBody"></tbody>
+
+    </table>
+
+    <p id="loadsEmpty" class="muted">No loads recorded yet.</p>
+
+  </div>
+
+</div>
 
 </section>
 </main><nav class="tabs"id="appNav" style="display:none"><div><button id="tab-home" onclick="go('home')">Home</button><button id="tab-plantings" onclick="go('plantings')">Plantings</button><button onclick="showNewPlant()">+ New</button><button type="button" onclick="logoutFieldScout()">Log Out</button></div></nav>
