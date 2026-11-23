@@ -2558,4 +2558,89 @@ cancelLoadBtn.onclick = () => {
   }
 
 }; 
+  
+
+async function loadLoads() {
+
+  const body = document.getElementById('loadsTableBody');
+
+  const empty = document.getElementById('loadsEmpty');
+
+  body.replaceChildren();
+
+  empty.textContent = 'Loading loads...';
+
+  empty.style.display = '';
+
+  const { data, error } = await supabaseClient
+
+    .from('loads')
+
+    .select('*')
+
+    .order('harvest_date', { ascending: false })
+
+    .order('id', { ascending: false });
+
+  if (error) {
+
+    console.error('Load records error:', error);
+
+    empty.textContent = 'Could not load records.';
+
+    return;
+
+  }
+
+  empty.textContent = 'No loads recorded yet.';
+
+  empty.style.display = data.length ? 'none' : '';
+
+  data.forEach(load => {
+
+    const row = document.createElement('tr');
+
+    const values = [
+
+      load.harvest_date,
+
+      load.po_number,
+
+      load.commodity,
+
+      load.planting_source,
+
+      load.ranch,
+
+      load.lot,
+
+      load.acres,
+
+      load.pallets,
+
+      load.pounds
+
+    ];
+
+    values.forEach(value => {
+
+      const cell = document.createElement('td');
+
+      cell.textContent = value ?? '';
+
+      cell.style.padding = '10px';
+
+      cell.style.borderBottom = '1px solid #ddd';
+
+      row.appendChild(cell);
+
+    });
+
+    body.appendChild(row);
+
+  });
+
+}
+
+loadsNavButton.addEventListener('click', loadLoads);
 </script></body></html>
