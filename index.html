@@ -63,6 +63,15 @@ lo<!doctype html>
 <section id="plantings" class="page hidden"><div class="item"><h2>Plantings</h2><button onclick="showNewPlant()">+ New</button><button type="button" id="importExcelBtn" class="secondary" onclick="document.getElementById('excelFileInput').click()">Import Excel</button><input type="file" id="excelFileInput" accept=".xlsx,.xls" style="display:none"></div><input id="search" placeholder="Search TLC Ref #, ranch, lot..." oninput="renderPlants()"><div class="row" style="margin-top:10px"><select id="filterProduct" onchange="renderPlants()"><option value="">All Commodities</option><option>Arúgula</option><option value="Espinaca">Spinach</option><option>Cress</option></select><select id="filterStatus" onchange="renderPlants()"><option value="">All Statuses</option><option>Projected</option><option>Planted</option><option>Growing</option><option>Near Harvest</option><option>Harvested</option><option>Closed</option><option>No Harvest</option></select></div><div id="excelPreview" class="card hidden"></div><div id="plantList" style="margin-top:12px"></div></section>
 <section id="newPlant" class="page hidden"><button class="back" onclick="go('plantings')">← Plantings</button><h2 class="bigtitle">New Planting</h2><form id="plantForm" action="#newPlant" class="card formgrid"><div><label>Commodity *</label><select name="product" required><option value="">Select Commodity</option><option>Arúgula</option><option value="Espinaca">Spinach</option><option>Cress</option></select></div><div><label>TLC Ref # *</label><input name="ref" required placeholder="Ej. S24506"></div><div><label>Landlord</label><input name="landlord"></div><div><label>Ranch *</label><input name="ranch" required></div><div><label>Lot *</label><input name="lot" required></div><div><label>Variety</label><input name="variety"></div><div><label>Customer</label><input name="customer"></div><div><label>Acres *</label><input name="acres" type="number" min="0" step="0.01" required></div><div><label>Beds</label><input name="beds" type="number" min="0" step="1"></div><div><label>Proj Wet Date</label><input name="wetDate" type="date"></div><div><label>Proj Clip Days</label><input name="clipDays" type="number" min="0"></div><div><label>Clip Harv. Date</label><input name="harvestDate" type="date"></div><div><label>Status</label><select name="status"><option>Projected</option><option>Planted</option><option>Growing</option><option>Near Harvest</option></select></div><div class="full" style="margin-top:16px"><button type="button" id="savePlantBtn">Save Planting</button></div></form></section>
 <section id="detail" class="page hidden"><button class="back" onclick="go('plantings')">← Plantings</button><div id="detailBody"></div></section>
+
+
+<section id="loadsPage" class="page hidden">
+
+  <h2 class="bigtitle">Loads Harvested</h2>
+
+  <div id="loadsContent"></div>
+
+</section>
 </main><nav class="tabs"id="appNav" style="display:none"><div><button id="tab-home" onclick="go('home')">Home</button><button id="tab-plantings" onclick="go('plantings')">Plantings</button><button onclick="showNewPlant()">+ New</button><button type="button" onclick="logoutFieldScout()">Log Out</button></div></nav>
 <script>
 const SUPABASE_URL='https://rdqbiqyujsnqajpjvufb.supabase.co';
@@ -1227,6 +1236,13 @@ openPlant = function(id) {
 };
   function showReports(){let ps=db.plants||[],acres=ps.reduce((n,p)=>n+(+p.acres||0),0),done=ps.filter(p=>harvestsOf(p).length),expectedTotal=done.reduce((n,p)=>n+expected(p),0),actualTotal=done.reduce((n,p)=>n+harvestTotals(p).pounds,0),harvestAcres=done.reduce((n,p)=>n+(+p.acres||0),0),avg=harvestAcres?actualTotal/harvestAcres:0;document.querySelector('#detail > .back').style.display='none';detailBody.innerHTML=`<button class="back" onclick="go('home')">← Home</button><h2 class="bigtitle">Reports</h2><div class="card"><div class="row"><div><b>Total Plantings</b><div>${ps.length}</div></div><div><b>Total Acres</b><div>${acres.toFixed(1)}</div></div><div><b>Harvested Plantings</b><div>${done.length}</div></div><div><b>Average Yield</b><div>${avg.toFixed(0)} lb/acre</div></div><div><b>Expected Pounds</b><div>${expectedTotal.toLocaleString()}</div></div><div><b>Harvested Pounds</b><div>${actualTotal.toLocaleString()}</div></div></div><h2>Results by Planting</h2>${done.length?done.map(p=>{let t=harvestTotals(p),e=expected(p),pct=e?t.pounds/e*100:0;return `<div class="card item" onclick="openPlant('${p.id}')"><div><b>${esc(p.ref||'No Ref')} · ${esc(p.product||'')}</b><div class="muted">${esc(p.ranch||'')} / ${esc(p.lot||'')}</div><div>${t.pounds.toLocaleString()} lb · ${(+p.acres||0).toLocaleString()} acres · ${pct.toFixed(1)}% of Expected</div></div></div>`}).join(''):`<div class="card muted">No harvests recorded yet.</div>`}`;go('detail')}
   let nav=document.querySelector('.tabs div');if(nav){nav.style.gridTemplateColumns='repeat(4,1fr)';let rb=document.createElement('button');rb.textContent='Reports';rb.onclick=showReports;nav.appendChild(rb)}document.querySelector('header small').textContent='Planting & Crop Tracking · v2.7';
+  const loadsNavButton = document.createElement('button');
+
+loadsNavButton.textContent = 'Loads';
+
+loadsNavButton.onclick = () => go('loadsPage');
+
+document.querySelector('#appNav > div').appendChild(loadsNavButton);
   
 
 function harvestTiming(p) {
