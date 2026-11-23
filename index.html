@@ -2483,4 +2483,79 @@ cancelLoadBtn.onclick = () => {
   addLoadBtn.style.display = '';
 
 };
+ loadForm.onsubmit = async (e) => {
+
+  e.preventDefault();
+
+  if (window.fieldScoutRole !== 'admin') return;
+
+  if (loadForm.dataset.saving === '1') return;
+
+  const f = new FormData(loadForm);
+
+  const load = {
+
+    harvest_date: f.get('harvest_date'),
+
+    po_number: f.get('po_number').trim(),
+
+    commodity: f.get('commodity'),
+
+    planting_source: f.get('planting_source'),
+
+    ranch: f.get('ranch').trim(),
+
+    lot: f.get('lot').trim(),
+
+    acres: Number(f.get('acres')),
+
+    pallets: Number(f.get('pallets')),
+
+    pounds: Number(f.get('pounds'))
+
+  };
+
+  const button = loadForm.querySelector('[type="submit"]');
+
+  loadForm.dataset.saving = '1';
+
+  button.disabled = true;
+
+  button.textContent = 'Saving...';
+
+  try {
+
+    const { error } = await supabaseClient
+
+      .from('loads')
+
+      .insert([load]);
+
+    if (error) throw error;
+
+    alert('Load saved successfully!');
+
+    loadForm.reset();
+
+    loadForm.classList.add('hidden');
+
+    addLoadBtn.style.display = '';
+
+  } catch (error) {
+
+    console.error('Save Load error:', error);
+
+    alert('Load could not be saved. Please try again.');
+
+  } finally {
+
+    loadForm.dataset.saving = '0';
+
+    button.disabled = false;
+
+    button.textContent = 'Save Load';
+
+  }
+
+}; 
 </script></body></html>
