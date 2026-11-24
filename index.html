@@ -126,11 +126,28 @@ lo<!doctype html>
       <option>B&W</option>
 
       <option>TLC</option>
+      <option value="Other">Other</option>
 
     </select>
 
   </div>
 
+
+<div id="otherCompanyField" class="hidden">
+
+  <label>Company Name (Optional)</label>
+
+  <input
+
+    type="text"
+
+    id="otherCompanyName"
+
+    placeholder="Enter company name"
+
+  >
+
+</div>
   <div>
 
     <label>Ranch *</label>
@@ -2502,7 +2519,11 @@ cancelLoadBtn.onclick = () => {
     commodity: f.get('commodity'),
 
     planting_source: f.get('planting_source'),
+company_name: f.get('planting_source') === 'Other'
 
+  ? document.getElementById('otherCompanyName').value.trim()
+
+  : null,
     ranch: f.get('ranch').trim(),
 
     lot: f.get('lot').trim(),
@@ -2608,7 +2629,13 @@ async function loadLoads() {
 
       load.commodity,
 
-      load.planting_source,
+      
+
+load.planting_source === 'Other' && load.company_name
+
+  ? 'Other — ' + load.company_name
+
+  : load.planting_source,
 
       load.ranch,
 
@@ -2643,4 +2670,21 @@ async function loadLoads() {
 }
 
 loadsNavButton.addEventListener('click', loadLoads);
+  
+
+const loadSourceSelect = loadForm.querySelector('[name="planting_source"]');
+
+const otherCompanyField = document.getElementById('otherCompanyField');
+
+loadSourceSelect.onchange = () => {
+
+  otherCompanyField.classList.toggle(
+
+    'hidden',
+
+    loadSourceSelect.value !== 'Other'
+
+  );
+
+};
 </script></body></html>
