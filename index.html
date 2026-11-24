@@ -77,7 +77,33 @@
   </button>
 
 </div>
-  
+
+
+<div class="actions" style="margin:12px 0;flex-wrap:wrap">
+
+  <label>
+
+    From Date
+
+    <input type="date" id="loadDateFrom">
+
+  </label>
+
+  <label>
+
+    To Date
+
+    <input type="date" id="loadDateTo">
+
+  </label>
+
+  <button type="button" id="clearLoadDates">
+
+    Clear Dates
+
+  </button>
+
+</div>  
 
 <form id="loadForm" class="card formgrid hidden">
 
@@ -2629,7 +2655,21 @@ data.sort((a, b) =>
   )
 
 );
-  data.forEach(load => {
+  
+
+data.filter(load => {
+
+  const from = document.getElementById('loadDateFrom').value;
+
+  const to = document.getElementById('loadDateTo').value;
+
+  const date = load.harvest_date;
+
+  return (!from || date >= from) &&
+
+         (!to || date <= to);
+
+}).forEach(load => {
 
     const row = document.createElement('tr');
 
@@ -2784,4 +2824,19 @@ orderedMenu.forEach(([name, label]) => {
 
 });
 menuNav.appendChild(menuButton);
+  
+
+document.getElementById('loadDateFrom').addEventListener('change', loadLoads);
+
+document.getElementById('loadDateTo').addEventListener('change', loadLoads);
+
+document.getElementById('clearLoadDates').addEventListener('click', () => {
+
+  document.getElementById('loadDateFrom').value = '';
+
+  document.getElementById('loadDateTo').value = '';
+
+  loadLoads();
+
+});
 </script></body></html>
