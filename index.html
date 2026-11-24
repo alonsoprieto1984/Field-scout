@@ -2731,5 +2731,45 @@ menuOptions.querySelectorAll('button').forEach(button => {
 
 });
 
+
+const orderedMenu = [
+
+  ['Home', '⌂ Home'],
+
+  ['Plantings', '🌱 Plantings'],
+
+  ['+ New', '⊕ New Planting'],
+
+  ['Loads', '🚚 Loads Harvested'],
+
+  ['Reports', '▥ Reports'],
+
+  ['Log Out', '↪ Log Out']
+
+];
+
+orderedMenu.forEach(([name, label]) => {
+
+  const button = [...menuOptions.querySelectorAll('button')]
+
+    .find(b => b.textContent.trim() === name);
+
+  if (!button) return;
+
+  button.textContent = label;
+
+  button.style.textAlign = 'left';
+
+  button.style.padding = '12px 24px';
+
+  if (name === 'Log Out') {
+
+    button.style.borderTop = '1px solid #dfe7e1';
+
+  }
+
+  menuOptions.appendChild(button);
+
+});
 menuNav.appendChild(menuButton);
 </script></body></html>
