@@ -2616,7 +2616,19 @@ async function loadLoads() {
   empty.textContent = 'No loads recorded yet.';
 
   empty.style.display = data.length ? 'none' : '';
+data.sort((a, b) =>
 
+  String(a.po_number || '').localeCompare(
+
+    String(b.po_number || ''),
+
+    undefined,
+
+    { numeric: true }
+
+  )
+
+);
   data.forEach(load => {
 
     const row = document.createElement('tr');
