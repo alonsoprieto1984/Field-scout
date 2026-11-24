@@ -2687,4 +2687,49 @@ loadSourceSelect.onchange = () => {
   );
 
 };
+  
+
+const menuNav = document.getElementById('appNav');
+
+const menuOptions = menuNav.querySelector('div');
+
+menuNav.style.flexDirection = 'column';
+
+menuNav.style.alignItems = 'stretch';
+
+menuOptions.style.display = 'none';
+
+menuOptions.style.gridTemplateColumns = '1fr';
+
+const menuButton = document.createElement('button');
+
+menuButton.type = 'button';
+
+menuButton.textContent = '☰ Menu';
+
+menuButton.style.background = '#173f29';
+
+menuButton.style.color = 'white';
+
+menuButton.style.padding = '15px';
+
+menuButton.onclick = () => {
+
+  const isOpen = menuOptions.style.display !== 'none';
+
+  menuOptions.style.display = isOpen ? 'none' : 'grid';
+
+};
+
+menuOptions.querySelectorAll('button').forEach(button => {
+
+  button.addEventListener('click', () => {
+
+    menuOptions.style.display = 'none';
+
+  });
+
+});
+
+menuNav.appendChild(menuButton);
 </script></body></html>
