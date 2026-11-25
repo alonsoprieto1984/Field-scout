@@ -96,7 +96,23 @@
     <input type="date" id="loadDateTo">
 
   </label>
+<label>
 
+  Commodity
+
+  <select id="loadProductFilter">
+
+    <option value="">All Commodities</option>
+
+    <option value="Arúgula">Arúgula</option>
+
+    <option value="Espinaca">Spinach</option>
+
+    <option value="Cress">Cress</option>
+
+  </select>
+
+</label>
   <button type="button" id="clearLoadDates">
 
     Clear Dates
@@ -2664,7 +2680,23 @@ data.filter(load => {
   const to = document.getElementById('loadDateTo').value;
 
   const date = load.harvest_date;
+const product = document.getElementById('loadProductFilter').value;
 
+if (product) {
+
+  const commodity = load.commodity;
+
+  if (product === 'Espinaca') {
+
+    if (commodity !== 'Espinaca' && commodity !== 'Spinach') return false;
+
+  } else if (commodity !== product) {
+
+    return false;
+
+  }
+
+}
   return (!from || date >= from) &&
 
          (!to || date <= to);
@@ -2825,7 +2857,7 @@ orderedMenu.forEach(([name, label]) => {
 });
 menuNav.appendChild(menuButton);
   
-
+document.getElementById('loadProductFilter').addEventListener('change', loadLoads);
 document.getElementById('loadDateFrom').addEventListener('change', loadLoads);
 
 document.getElementById('loadDateTo').addEventListener('change', loadLoads);
