@@ -3155,6 +3155,45 @@ openPlant = function(id) {
 
       record.appendChild(actions);
 actions.querySelector('button').onclick = () => editHarvestForm(h.cloudId);
+      actions.querySelectorAll('button')[1].onclick = async () => {
+
+  if (window.fieldScoutRole !== 'admin') return;
+
+  if (!confirm('Are you sure you want to delete this Harvest? This cannot be undone.')) return;
+
+  const { data, error } = await supabaseClient
+
+    .from('harvests')
+
+    .delete()
+
+    .eq('id', h.cloudId)
+
+    .select('id');
+
+  if (error || !data?.length) {
+
+    alert('Could not delete Harvest.');
+
+    return;
+
+  }
+
+  p.harvests = (p.harvests || []).filter(
+
+    x => String(x.cloudId) !== String(h.cloudId)
+
+  );
+
+  p.harvest = p.harvests[p.harvests.length - 1] || null;
+
+  save();
+
+  openPlant(p.id);
+
+  alert('Harvest deleted successfully.');
+
+};
     }
 
     record = record.nextElementSibling;
