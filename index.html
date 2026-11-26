@@ -3015,7 +3015,37 @@ menuNav.appendChild(menuButton);
     () => openPlant(p.id);
 document.getElementById('saveEditHarvest').onclick = async function() {
 
-  alert('Save button connected');
+  const date = document.getElementById('editHarvestDate').value;
+
+  const po = document.getElementById('editHarvestPO').value.trim();
+
+  const pounds = Number(document.getElementById('editHarvestPounds').value);
+
+  const pallets = Number(document.getElementById('editHarvestPallets').value);
+
+  if (!date || !Number.isInteger(pounds) || pounds < 0 ||
+
+      !Number.isInteger(pallets) || pallets < 0) {
+
+    alert('Please enter a valid date, pounds and pallets.');
+
+    return;
+
+  }
+
+  alert(
+
+    'Harvest changes ready:\n' +
+
+    'Date: ' + date + '\n' +
+
+    'PO: ' + po + '\n' +
+
+    'Pounds: ' + pounds + '\n' +
+
+    'Pallets: ' + pallets
+
+  );
 
 };
 }
