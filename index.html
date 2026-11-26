@@ -3009,7 +3009,7 @@ menuNav.appendChild(menuButton);
   `;
 
   document.getElementById('editHarvestStatus').value = h.status;
-
+document.getElementById('editHarvestStatus').disabled = true;
   document.getElementById('backFromEditHarvest').onclick =
 
     () => openPlant(p.id);
