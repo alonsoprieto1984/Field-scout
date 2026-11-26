@@ -3102,7 +3102,7 @@ try {
 
   console.error('Harvest update error:', error);
 
-  alert('Could not update Harvest. No local changes were saved.');
+  alert('Harvest update error: ' + (error.message || String(error)));
 
 } finally {
 
