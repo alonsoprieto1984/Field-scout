@@ -3051,14 +3051,14 @@ openPlant = function(id) {
 
       actions.innerHTML = `
 
-        <button type="button" disabled>Edit Harvest</button>
+        <button type="button">Edit Harvest</button>
 
         <button type="button" class="danger" disabled>Delete Harvest</button>
 
       `;
 
       record.appendChild(actions);
-
+actions.querySelector('button').onclick = () => editHarvestForm(h.cloudId);
     }
 
     record = record.nextElementSibling;
