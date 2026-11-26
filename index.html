@@ -3032,20 +3032,86 @@ document.getElementById('saveEditHarvest').onclick = async function() {
     return;
 
   }
+if (window.fieldScoutRole !== 'admin') return;
 
-  alert(
+const customer = document.getElementById('editHarvestCustomer').value.trim();
 
-    'Harvest changes ready:\n' +
+const observations = document.getElementById('editHarvestObservations').value.trim();
 
-    'Date: ' + date + '\n' +
+const button = document.getElementById('saveEditHarvest');
 
-    'PO: ' + po + '\n' +
+button.disabled = true;
 
-    'Pounds: ' + pounds + '\n' +
+button.textContent = 'Saving...';
 
-    'Pallets: ' + pallets
+try {
 
-  );
+  const { data, error } = await supabaseClient
+
+    .from('harvests')
+
+    .update({
+
+      harvest_date: date,
+
+      po_number: po || null,
+
+      pounds: pounds,
+
+      pallets: pallets,
+
+      customer: customer || null,
+
+      observations: observations || null
+
+    })
+
+    .eq('id', h.cloudId)
+
+    .select('id')
+
+    .single();
+
+  if (error) throw error;
+
+  if (!data) throw new Error('Harvest record not found.');
+
+  Object.assign(h, {
+
+    date,
+
+    po_number: po,
+
+    pounds,
+
+    pallets,
+
+    customer,
+
+    observations
+
+  });
+
+  save();
+
+  alert('Harvest updated successfully.');
+
+  openPlant(p.id);
+
+} catch (error) {
+
+  console.error('Harvest update error:', error);
+
+  alert('Could not update Harvest. No local changes were saved.');
+
+} finally {
+
+  button.disabled = false;
+
+  button.textContent = 'Save Changes';
+
+}
+  
 
 };
 }
