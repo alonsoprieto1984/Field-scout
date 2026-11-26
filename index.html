@@ -2865,6 +2865,27 @@ orderedMenu.forEach(([name, label]) => {
   menuOptions.appendChild(button);
 
 });
+  const contractsButton = document.createElement('button');
+
+contractsButton.textContent = '📊 Weekly Contracts – TLC';
+
+contractsButton.style.textAlign = 'left';
+
+contractsButton.style.padding = '12px 24px';
+
+contractsButton.onclick = () => {
+
+  menuOptions.style.display = 'none';
+
+  go('weeklyContractsPage');
+
+};
+
+const reportsButton = [...menuOptions.querySelectorAll('button')]
+
+  .find(b => b.textContent.includes('Reports'));
+
+menuOptions.insertBefore(contractsButton, reportsButton || null);
 menuNav.appendChild(menuButton);
   
 document.getElementById('loadProductFilter').addEventListener('change', loadLoads);
