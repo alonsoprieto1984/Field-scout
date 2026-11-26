@@ -64,7 +64,17 @@
 <section id="newPlant" class="page hidden"><button class="back" onclick="go('plantings')">← Plantings</button><h2 class="bigtitle">New Planting</h2><form id="plantForm" action="#newPlant" class="card formgrid"><div><label>Commodity *</label><select name="product" required><option value="">Select Commodity</option><option>Arúgula</option><option value="Espinaca">Spinach</option><option>Cress</option></select></div><div><label>TLC Ref # *</label><input name="ref" required placeholder="Ej. S24506"></div><div><label>Landlord</label><input name="landlord"></div><div><label>Ranch *</label><input name="ranch" required></div><div><label>Lot *</label><input name="lot" required></div><div><label>Variety</label><input name="variety"></div><div><label>Customer</label><input name="customer"></div><div><label>Acres *</label><input name="acres" type="number" min="0" step="0.01" required></div><div><label>Beds</label><input name="beds" type="number" min="0" step="1"></div><div><label>Proj Wet Date</label><input name="wetDate" type="date"></div><div><label>Proj Clip Days</label><input name="clipDays" type="number" min="0"></div><div><label>Clip Harv. Date</label><input name="harvestDate" type="date"></div><div><label>Status</label><select name="status"><option>Projected</option><option>Planted</option><option>Growing</option><option>Near Harvest</option></select></div><div class="full" style="margin-top:16px"><button type="button" id="savePlantBtn">Save Planting</button></div></form></section>
 <section id="detail" class="page hidden"><button class="back" onclick="go('plantings')">← Plantings</button><div id="detailBody"></div></section>
 
+<section id="weeklyContractsPage" class="page hidden">
 
+  <h2 class="bigtitle">Weekly Contracts – TLC</h2>
+
+  <div class="card">
+
+    <p>Weekly Contract vs. Actual Purchased</p>
+
+  </div>
+
+</section>
 <section id="loadsPage" class="page hidden">
 
   <h2 class="bigtitle">Loads Harvested</h2>
