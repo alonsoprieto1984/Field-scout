@@ -2922,7 +2922,53 @@ const reportsButton = [...menuOptions.querySelectorAll('button')]
 
 menuOptions.insertBefore(contractsButton, reportsButton || null);
 menuNav.appendChild(menuButton);
-  
+const openPlantBeforeHarvestButtons = openPlant;
+
+openPlant = function(id) {
+
+  openPlantBeforeHarvestButtons(id);
+
+  if (window.fieldScoutRole !== 'admin') return;
+
+  const p = db.plants.find(x => x.id === id);
+
+  if (!p) return;
+
+  const heading = [...detailBody.querySelectorAll('h3')]
+
+    .find(x => x.textContent.trim() === 'Harvest Records');
+
+  let record = heading?.nextElementSibling;
+
+  harvestsOf(p).forEach(h => {
+
+    if (!record) return;
+
+    if (h.cloudId != null) {
+
+      const actions = document.createElement('div');
+
+      actions.className = 'actions';
+
+      actions.style.marginTop = '8px';
+
+      actions.innerHTML = `
+
+        <button type="button" disabled>Edit Harvest</button>
+
+        <button type="button" class="danger" disabled>Delete Harvest</button>
+
+      `;
+
+      record.appendChild(actions);
+
+    }
+
+    record = record.nextElementSibling;
+
+  });
+
+};  
 document.getElementById('loadProductFilter').addEventListener('change', loadLoads);
 document.getElementById('loadDateFrom').addEventListener('change', loadLoads);
 
