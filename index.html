@@ -2922,6 +2922,52 @@ const reportsButton = [...menuOptions.querySelectorAll('button')]
 
 menuOptions.insertBefore(contractsButton, reportsButton || null);
 menuNav.appendChild(menuButton);
+  document.getElementById('saveContractBtn').onclick = async function() {
+
+  const week = document.getElementById('contractWeekEnding').value;
+
+  if (!week) {
+
+    alert('Please select a week ending date.');
+
+    return;
+
+  }
+if (new Date(week + 'T12:00:00').getDay() !== 6) {
+
+  alert('Week Ending must be a Saturday.');
+
+  return;
+
+}
+  const arugula = Number(document.getElementById('contractArugula').value);
+
+const spinach = Number(document.getElementById('contractSpinach').value);
+
+const cress = Number(document.getElementById('contractCress').value);  
+if (![arugula, spinach, cress].every(
+
+  n => Number.isSafeInteger(n) && n >= 0
+
+)) {
+
+  alert('Please enter valid contract amounts.');
+
+  return;
+
+}
+    const contractData = {
+
+  week_ending: week,
+
+  arugula_lbs: arugula,
+
+  spinach_lbs: spinach,
+
+  cress_lbs: cress
+
+};
+  };
   function editHarvestForm(cloudId) {
 
   if (window.fieldScoutRole !== 'admin') return;
