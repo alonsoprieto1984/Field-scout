@@ -2967,6 +2967,23 @@ if (![arugula, spinach, cress].every(
   cress_lbs: cress
 
 };
+    if (window.fieldScoutRole !== 'admin') return;
+
+const { error } = await supabaseClient
+
+  .from('weekly_contracts')
+
+  .upsert(contractData, { onConflict: 'week_ending' });
+
+if (error) {
+
+  alert('Could not save contract: ' + error.message);
+
+  return;
+
+}
+
+alert('Contract saved successfully.');
   };
   function editHarvestForm(cloudId) {
 
