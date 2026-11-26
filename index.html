@@ -2922,6 +2922,103 @@ const reportsButton = [...menuOptions.querySelectorAll('button')]
 
 menuOptions.insertBefore(contractsButton, reportsButton || null);
 menuNav.appendChild(menuButton);
+  function editHarvestForm(cloudId) {
+
+  if (window.fieldScoutRole !== 'admin') return;
+
+  const p = db.plants.find(x => x.id === current);
+
+  if (!p) return;
+
+  const h = harvestsOf(p).find(
+
+    x => String(x.cloudId) === String(cloudId)
+
+  );
+
+  if (!h) return;
+
+  detailBody.innerHTML = `
+
+    <button class="back" id="backFromEditHarvest">
+
+      ← Planting Details
+
+    </button>
+
+    <h2 class="bigtitle">Edit Harvest</h2>
+
+    <div class="card">
+
+      <label>Result</label>
+
+      <select id="editHarvestStatus">
+
+        <option>Partial</option>
+
+        <option>Harvested</option>
+
+        <option>No Harvest</option>
+
+      </select>
+
+      <label>Harvest Date</label>
+
+      <input type="date" id="editHarvestDate"
+
+        value="${esc(h.date)}">
+
+      <label>PO Number</label>
+
+      <input id="editHarvestPO"
+
+        value="${esc(h.po_number || '')}">
+
+      <label>Pounds</label>
+
+      <input type="number" id="editHarvestPounds"
+
+        value="${Number(h.pounds) || 0}">
+
+      <label>Pallets</label>
+
+      <input type="number" id="editHarvestPallets"
+
+        value="${Number(h.pallets) || 0}">
+
+      <label>Customer</label>
+
+      <input id="editHarvestCustomer"
+
+        value="${esc(h.customer || '')}">
+
+      <label>Observations</label>
+
+      <textarea id="editHarvestObservations"
+
+        rows="3">${esc(h.observations || '')}</textarea>
+
+      <button type="button" id="saveEditHarvest">
+
+        Save Changes
+
+      </button>
+
+    </div>
+
+  `;
+
+  document.getElementById('editHarvestStatus').value = h.status;
+
+  document.getElementById('backFromEditHarvest').onclick =
+
+    () => openPlant(p.id);
+document.getElementById('saveEditHarvest').onclick = async function() {
+
+  alert('Save button connected');
+
+};
+}
 const openPlantBeforeHarvestButtons = openPlant;
 
 openPlant = function(id) {
